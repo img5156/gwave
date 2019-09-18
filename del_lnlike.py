@@ -6,7 +6,7 @@ from scipy import integrate
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.optimize as opt
-import matplotlib; matplotlib.use('Agg')
+#import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as pl
 import corner
 from matplotlib.ticker import MaxNLocator
@@ -211,14 +211,14 @@ result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
 #start_time = time.perf_counter()
 #print("Started time.")
 # Set up the sampler.
-print("Setting up sampler.")
+print("Setting up sampler for binning algorithm.")
 ndim, nwalkers = 7, 100
-pos = [result + 1e-4*np.random.randn(ndim) for i in range(nwalkers)]
+pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
 
 # Clear and run the production chain.
-print("Running MCMC...")
+print("Running MCMC for binning algorithm...")
 sampler.run_mcmc(pos, 5000)
 #print (pos)
 print("Done.")
@@ -228,12 +228,12 @@ print("Done.")
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 print("Saving data in file.")
-np.savetxt("test_del_lnlike_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_bin_del_lnlike_05k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 #print("--- %s seconds ---" % (time.perf_counter() - start_time))
 
 print("Loading the saved data.")
-pars = np.loadtxt('test_del_lnlike_5k_1w.dat')
+pars = np.loadtxt('test_bin_del_lnlike_05k_1w.dat')
 
 Mc = pars[:, 0]
 eta = pars[:, 1]
@@ -242,10 +242,17 @@ chia = pars[:, 3]
 lam = pars[:, 4]
 tc1 = pars[:, 5]
 tc2 = pars[:, 6]
+
 lnlk_bin = []
 
 for i in range(len(Mc)):
     lnlk_bin.append(lnlikelihood(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i], tc2[i]))
+
+print("Created lnlikelihood array using binning.")
+df = 1./128./4.
+def sh(f):
+    s = 5.623746655206207e-51 + 6.698419551167371e-50*f**(-0.125) + 7.805894950092525e-31/f**20. + 4.35400984981997e-43/f**6. + 1.630362085130558e-53*f + 2.445543127695837e-56*f**2 + 5.456680257125753e-66*f**5
+    return s
 
 #Calculating the innerproduct
 def overlap(A, B, f):
@@ -253,11 +260,68 @@ def overlap(A, B, f):
     return summ
 
 # Define log likelihood
-def lnlike(Mc, eta, chieff, chia, lam, tc1, tc2):
+def lnlike_real(Mc, eta, chieff, chia, lam):
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
     chis = chieff - delta * chia
     s1z = chis + chia
     s2z = chis - chia
-    h = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=Lam)
+    h = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     return -0.5*overlap(sFT-h, sFT-h, f)
+
+def lnprob_real(Mc, eta, chieff, chia, lam, tc1, tc2):
+	lp = lnprior(Mc, eta, chieff, chia, lam, tc1, tc2)
+	if not np.isfinite(lp):
+		return -np.inf
+	return lp + lnlike_real(Mc, eta, chieff, chia, lam)
+
+def lnp_real(theta):
+	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
+	return lnprob(Mc, eta, chieff, chia, lam, tc1, tc2)
+
+result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
+
+print("Setting up sampler for waveform.")
+ndim, nwalkers = 7, 100
+pos = [result2 + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
+sampler2 = emcee.EnsembleSampler(nwalkers, ndim, lnp_real)
+#print pos
+
+# Clear and run the production chain.
+print("Running MCMC for waveform...")
+sampler2.run_mcmc(pos, 5000)
+#print (pos)
+print("Done.")
+
+burnin = 1000
+samples2 = sampler2.chain[:, burnin:, :].reshape((-1, ndim))
+# saving data in file
+np.savetxt("test_real_del_lnlike_05k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+
+print("Loading the saved data.")
+pars_real = np.loadtxt('test_real_del_lnlike_05k_1w.dat')
+
+Mc_real = pars_real[:, 0]
+eta_real = pars_real[:, 1]
+chieff_real = pars_real[:, 2]
+chia_real = pars_real[:, 3]
+lam_real = pars_real[:, 4]
+tc1_real = pars_real[:, 5]
+tc2_real = pars_real[:, 6]
+
+lnlk_real = []
+
+for i in range(len(Mc_real)):
+    lnlk_real.append(lnlike_real(Mc_real[i], eta_real[i], chieff_real[i], chia_real[i], lam_real[i]))
+
+print("Created lnlikelihood array using waveform.")
+
+del_lnlk = []
+
+for i in range(len(lnlk_bin)):
+    del_lnlk.append(abs(abs(lnlk_bin[i])-abs(lnlk_real[i])))
+
+print("Created del_lnlikelihood array.")
+pl.scatter(lnlk_bin, del_lnlk)
+pl.savefig('plot_test_del_lnlike_05k_1w.pdf')
+pl.close()
