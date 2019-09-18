@@ -219,21 +219,21 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 
 # Clear and run the production chain.
 print("Running MCMC for binning algorithm...")
-sampler.run_mcmc(pos, 5000)
+sampler.run_mcmc(pos, 500)
 #print (pos)
 print("Done.")
 
 
 # Removing first 100 points as chain takes some time to stabilize
-burnin = 1000
+burnin = 100
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 print("Saving data in file.")
-np.savetxt("test_bin_del_lnlike_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_bin_del_lnlike_05k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 #print("--- %s seconds ---" % (time.perf_counter() - start_time))
 
 print("Loading the saved data.")
-pars = np.loadtxt('test_bin_del_lnlike_5k_1w.dat')
+pars = np.loadtxt('test_bin_del_lnlike_05k_1w.dat')
 
 Mc = pars[:, 0]
 eta = pars[:, 1]
@@ -289,17 +289,17 @@ sampler2 = emcee.EnsembleSampler(nwalkers, ndim, lnp_real)
 
 # Clear and run the production chain.
 print("Running MCMC for waveform...")
-sampler2.run_mcmc(pos, 5000)
+sampler2.run_mcmc(pos, 500)
 #print (pos)
 print("Done.")
 
-burnin = 1000
+burnin = 100
 samples2 = sampler2.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("test_real_del_lnlike_5k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_real_del_lnlike_05k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 print("Loading the saved data.")
-pars_real = np.loadtxt('test_real_del_lnlike_5k_1w.dat')
+pars_real = np.loadtxt('test_real_del_lnlike_05k_1w.dat')
 
 Mc_real = pars_real[:, 0]
 eta_real = pars_real[:, 1]
