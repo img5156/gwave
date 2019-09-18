@@ -228,12 +228,12 @@ print("Done.")
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 print("Saving data in file.")
-np.savetxt("test_bin_del_lnlike_05k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_bin_del_lnlike_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 #print("--- %s seconds ---" % (time.perf_counter() - start_time))
 
 print("Loading the saved data.")
-pars = np.loadtxt('test_bin_del_lnlike_05k_1w.dat')
+pars = np.loadtxt('test_bin_del_lnlike_5k_1w.dat')
 
 Mc = pars[:, 0]
 eta = pars[:, 1]
@@ -256,7 +256,7 @@ def sh(f):
 
 #Calculating the innerproduct
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/sh(f)).sum()))*df
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*df
     return summ
 
 # Define log likelihood
@@ -296,10 +296,10 @@ print("Done.")
 burnin = 1000
 samples2 = sampler2.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("test_real_del_lnlike_05k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_real_del_lnlike_5k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 print("Loading the saved data.")
-pars_real = np.loadtxt('test_real_del_lnlike_05k_1w.dat')
+pars_real = np.loadtxt('test_real_del_lnlike_5k_1w.dat')
 
 Mc_real = pars_real[:, 0]
 eta_real = pars_real[:, 1]
@@ -323,5 +323,5 @@ for i in range(len(lnlk_bin)):
 
 print("Created del_lnlikelihood array.")
 pl.scatter(lnlk_bin, del_lnlk)
-pl.savefig('plot_test_del_lnlike_05k_1w.pdf')
+pl.savefig('plot_test_del_lnlike_5k_1w.pdf')
 pl.close()
