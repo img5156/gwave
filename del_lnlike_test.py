@@ -84,6 +84,51 @@ Lam_avg = 0.5*(Lam_bounds[0]+Lam_bounds[1])
 tc1_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 
+h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
+h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
+# these are NOT shifted to the right merger times
+h0_0 = [h0_L, h0_H]
+# these are shifted to the right merger times
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+
+print('Constructed fiducial waveforms.')
+
+# prepare frequency binning
+# range of frequency to be used in the computation of likelihood [f_lo, f_hi] [Hz]
+f_lo = 23.0
+f_hi = 1000.0
+
+Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0.5)
+#print(Nbin, fbin, fbin_ind)
+
+print("Frequency binning done: # of bins = %d"%(Nbin))
+
+# next prepare summary data
+sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
+
+print("Prepared summary data.")
+
+# find (nearly) best-fit parameters by maximizing the likelihood
+par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, atol=1e-10, verbose=True)
+
+# update the best-fit parameters
+MC = par_bf[0]                                       # detector frame chirp mass [Msun]
+ETA = par_bf[1]                                      # symmetric mass ratio m1*m2/(m1 + m2)**2
+DELTA = np.sqrt(1.0 - 4.0*ETA)                       # asymmetric mass ratio (m1 - m2)/(m1 + m2)
+M = MC/ETA**0.6                                      # total mass [Msun]
+M1 = 0.5*M*(1.0 + DELTA)                        # primary mass [Msun]
+M2 = 0.5*M*(1.0 - DELTA)                        # second mass [Msun]
+CHIEFF = par_bf[2]
+CHIA = par_bf[3]
+CHIS = CHIEFF - DELTA*CHIA
+S1Z = CHIS + CHIA                                        # aligned spin component for the primary
+S2Z = CHIS - CHIA                                # aligned spin component for the secondary
+LAM = par_bf[4]                                      # reduced tidal deformation parameter
+TC1 += par_bf[5]                                  # merger time (L1)
+TC2 += par_bf[6]                                  # merger time (H1)
+
+print('Updated parameters for the fiducial waveform')
+
 def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
     if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005:
         l = 0.0
@@ -117,5 +162,5 @@ def lnp_real(theta):
 
 result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
 print("Calculating likelihood.")
-#print(lnlike_real(Mc_bounds[0]))
+print(lnlike_real(MC, ETA, CHIEFF, CHIA, LAM))
 #print(lnlike_real(Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg))
