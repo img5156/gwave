@@ -43,10 +43,13 @@ HFT = np.fft.rfft(H1*tukey)/n_sample
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd_H = 2.0*np.convolve(np.absolute(HFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd = [psd_L, psd_H]
+psd2 = np.append(psd_L,psd_H)
 
 print("PSD calculated")
 # frequency domain data
 sFT = [LFT, HFT]
+#sFT.append(LFT)
+#sFT.append(HFT)
 
 MC = 1.1976                                      # detector frame chirp mass [Msun]
 ETA = 0.244                                      # symmetric mass ratio m1*m2/(m1 + m2)**2
@@ -137,30 +140,37 @@ def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
     return l
 
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*df
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd2).sum()))*df
     return summ
 
 # Define log likelihood
-def lnlike_real(Mc, eta, chieff, chia, lam):
+def lnlike_real(Mc, eta, chieff, chia, lam, tc1, tc2):
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
     chis = chieff - delta * chia
     s1z = chis + chia
     s2z = chis - chia
-    h = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
-    return -0.5*overlap(sFT-h, sFT-h, f)
+    h1_L = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
+    h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
+    # these are NOT shifted to the right merger times
+    h1_1 = np.append(h1_L, h1_H)
+    # these are shifted to the right merger times
+    sFT = np.append(LFT, HFT)
+    h1 = np.append(h1_L*np.exp(-2.0j*np.pi*f*tc1), h1_H*np.exp(-2.0j*np.pi*f*tc2))
+    print(len(np.asarray(h1_1)), len(np.asarray(sFT)), len(psd2))
+    print(np.amax(np.asarray(h1_1)), np.amax(np.asarray(sFT)), np.amax(np.asarray(psd2)))
+    return -0.5*overlap(np.asarray(sFT)-np.asarray(h1_1), np.asarray(sFT)-np.asarray(h1_1), f)
 
 def lnprob_real(Mc, eta, chieff, chia, lam, tc1, tc2):
 	lp = lnprior(Mc, eta, chieff, chia, lam, tc1, tc2)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + lnlike_real(Mc, eta, chieff, chia, lam)
+	return lp + lnlike_real(Mc, eta, chieff, chia, lam, tc1, tc2)
 
 def lnp_real(theta):
 	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
 	return lnprob(Mc, eta, chieff, chia, lam, tc1, tc2)
 
-result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
 print("Calculating likelihood.")
-print(lnlike_real(MC, ETA, CHIEFF, CHIA, LAM))
+print(lnlike_real(MC, ETA, CHIEFF, CHIA, LAM, TC1, TC2))
 #print(lnlike_real(Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg))
