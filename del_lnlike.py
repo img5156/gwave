@@ -260,13 +260,14 @@ def overlap(A, B, f):
     return summ
 
 # Define log likelihood
-def lnlike_real(Mc, eta, chieff, chia, lam):
+def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
     chis = chieff - delta * chia
     s1Z = chis + chia
     s2Z = chis - chia
-    h1_L = hf3hPN(f, M, eta, s1z=s1Z, s2z=s2Z, Lam=lam)
+    h1_L1 = hf3hPN(f, M, eta, s1z=s1Z, s2z=s2Z, Lam=lam)
+    h1_L = h1_L*np.exp(-2.0j*np.pi*f*tc1)
     #h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     # these are NOT shifted to the right merger times
     #h1_1 = np.append(h1_L, h1_H)
@@ -282,16 +283,16 @@ def lnprob_real(Mc, eta, chieff, chia, lam, tc1):
 	lp = lnprior(Mc, eta, chieff, chia, lam, tc1)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + lnlike_real(Mc, eta, chieff, chia, lam)
+	return lp + lnlike_real(Mc, eta, chieff, chia, lam, tc1)
 
 def lnp_real(theta):
-	Mc, eta, chieff, chia, lam = theta
-	return lnprob(Mc, eta, chieff, chia, lam)
+	Mc, eta, chieff, chia, lam, tc1 = theta
+	return lnprob(Mc, eta, chieff, chia, lam, tc1)
 
-result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg]
+result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg]
 
 print("Setting up sampler for waveform.")
-ndim, nwalkers = 5, 20
+ndim, nwalkers = 6, 20
 pos = [result2 + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler2 = emcee.EnsembleSampler(nwalkers, ndim, lnp_real)
 #print pos
@@ -315,7 +316,7 @@ eta_real = pars_real[:, 1]
 chieff_real = pars_real[:, 2]
 chia_real = pars_real[:, 3]
 lam_real = pars_real[:, 4]
-#tc1_real = pars_real[:, 5]
+tc1_real = pars_real[:, 5]
 #tc2_real = pars_real[:, 6]
 
 lnlk_real = np.zeros(len(Mc_real))
@@ -323,7 +324,7 @@ lnlk_real = np.zeros(len(Mc_real))
 print("Creating likelihood array for waveform.")
 
 for i in range(len(Mc_real)):
-    lnlk_real[i] = lnlike_real(Mc_real[i], eta_real[i], chieff_real[i], chia_real[i], lam_real[i])
+    lnlk_real[i] = lnlike_real(Mc_real[i], eta_real[i], chieff_real[i], chia_real[i], lam_real[i], tc1_real[i])
 
 print("Created lnlikelihood array using waveform.")
 
