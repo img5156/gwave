@@ -5,7 +5,7 @@ from scipy import integrate
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.optimize as opt
-#import matplotlib; matplotlib.use('Agg')
+import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as pl
 import corner
 from matplotlib.ticker import MaxNLocator
@@ -128,12 +128,12 @@ S1Z = CHIS + CHIA                                        # aligned spin componen
 S2Z = CHIS - CHIA                                # aligned spin component for the secondary
 LAM = par_bf[4]                                      # reduced tidal deformation parameter
 TC1 += par_bf[5]                                  # merger time (L1)
-TC2 += par_bf[6]                                  # merger time (H1)
+#TC2 += par_bf[6]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
-def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
-    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005:
+def lnprior(Mc, eta, chieff, chia, lam, tc1):
+    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005:
         l = 0.0
     else:
         l =-np.inf
@@ -157,6 +157,9 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     # these are shifted to the right merger times
     #sFT = np.append(LFT, HFT)
     #h1 = np.append(h1_L*np.exp(-2.0j*np.pi*f*tc1), h1_H*np.exp(-2.0j*np.pi*f*tc2))
+    pl.plot(f,(h1_L))
+    pl.savefig('plot_test_h1_l.pdf')
+    pl.close()
     print(len(np.asarray(h1_L)), len(np.asarray(LFT)), len(psd_L))
     print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(LFT)), np.amax(np.asarray(psd_L)))
     return -0.5*overlap(np.asarray(LFT)-np.asarray(h1_L), np.asarray(LFT)-np.asarray(h1_L), f)
