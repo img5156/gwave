@@ -115,9 +115,9 @@ tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
-h0_0 = [h0_L, h0_H]
+h0_0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+#h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Constructed fiducial waveforms.')
 
@@ -161,7 +161,7 @@ print('Updated parameters for the fiducial waveform')
 h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
-h0_0 = [h0_L, h0_H]
+h0_0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
 # these are shifted to the right merger times
 #h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 

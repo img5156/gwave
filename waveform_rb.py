@@ -29,7 +29,7 @@ def myHeaviside(x):
 
 
 # phase of h(f)
-def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, tc, phi_c):
+def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0):
     gt = 4.92549094830932e-6  # GN*Msun/c^3 in seconds
     EulerGamma = 0.57721566490153286060
     vlso = 1.0 / np.sqrt(6.0)
@@ -74,9 +74,9 @@ def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, La
     # tidal correction to phase
     # Lam is the reduced tidal deformation parameter \tilde\Lam
     # dLam is the asymmetric reduced tidal deformation parameter, which is usually negligible
-    #tidal = Lam * v10 * (- 39.0 / 2.0 - 3115.0 / 64.0 * v2) + dLam * 6595.0 / 364.0 * v12
+    tidal = Lam * v10 * (- 39.0 / 2.0 - 3115.0 / 64.0 * v2) + dLam * 6595.0 / 364.0 * v12
 
-    return 2*np.pi*f*tc - phi_c - np.pi/4 + (3.0 / 128.0 / eta / v5 * (
+    return 3.0 / 128.0 / eta / v5 * (
                 1.0 + 20.0 / 9.0 * (743.0 / 336.0 + 11.0 / 4.0 * eta) * v2 + (phis_15PN - 16.0 * np.pi) * v3 \
                 + 10.0 * (3058673.0 / 1016064.0 + 5429.0 / 1008.0 * eta + 617.0 / 144.0 * eta2 - sigma) * v4 \
                 + (38645.0 / 756.0 * np.pi - 65.0 / 9.0 * eta * np.pi - ga) * (1.0 + 3.0 * np.log(v / vlso)) * v5 \
@@ -85,7 +85,7 @@ def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, La
                    (
                                -15737765635.0 / 3048192.0 + 2255.0 * np.pi ** 2 / 12.0) * eta + 76055.0 / 1728.0 * eta2 - 127825.0 / 1296.0 * eta3 + phis_3PN) * v6 \
                 + (np.pi * (
-                    77096675.0 / 254016.0 + 378515.0 / 1512.0 * eta - 74045.0 / 756.0 * eta ** 2) + phis_35PN) * v7)) # +tidal)
+                    77096675.0 / 254016.0 + 378515.0 / 1512.0 * eta - 74045.0 / 756.0 * eta ** 2) + phis_35PN) * v7 +tidal)
 
 
 # correction to modulus of h(f)
