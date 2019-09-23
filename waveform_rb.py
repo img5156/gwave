@@ -206,7 +206,7 @@ def hf3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=
             
 def hf3hPN_H(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
  
-    A0 = Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi)
+    A0 = Af3hPN_rb(f, M, eta, theta, psi, phi, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     # note the convention for the sign in front of the phase
     
     phase = Phif3hPN(f, M, eta,  phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
@@ -218,10 +218,10 @@ def hf3hPN_H(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0
             
 def hf3hPN_L(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
     
-    A0 = Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi)
+    A0 = Af3hPN_rb(f, M, eta, theta, psi, phi, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     # note the convention for the sign in front of the phase
     
-    phase = Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, phi_c)
+    phase = Phif3hPN(f, M, eta, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     
     h_p = 0.5*(1+(np.cos(i))**2.0)*(f**(-7.0/6.0))*np.exp(1j*phase)/Dl
     h_x = (-1j)*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
