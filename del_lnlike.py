@@ -6,7 +6,7 @@ from scipy import integrate
 from scipy.interpolate import interp1d
 from scipy import signal
 import scipy.optimize as opt
-#import matplotlib; matplotlib.use('Agg')
+import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as pl
 import corner
 from matplotlib.ticker import MaxNLocator
@@ -29,7 +29,7 @@ from binning import *
 #   compute likelihood using summary data
 
 # number of detectors (Livingston and Hanford)
-ndtct = 2
+ndtct = 1
 
 
 # Since loading large data file is actually slow, we could cheat here by loading pre-computed data
@@ -153,7 +153,7 @@ S1Z = CHIS + CHIA                                        # aligned spin componen
 S2Z = CHIS - CHIA                                # aligned spin component for the secondary
 LAM = par_bf[4]                                      # reduced tidal deformation parameter
 TC1 += par_bf[5]                                  # merger time (L1)
-TC2 += par_bf[6]                                  # merger time (H1)
+#TC2 += par_bf[6]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
@@ -163,23 +163,23 @@ h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+#h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Updated fiducial waveforms.')
 
 # next prepare summary data
-sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
+sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0_0)
 
 print('Updated summary data.')
 
 
-def lnlikelihood(Mc, eta, chieff, chia, lam, tc1, tc2):
-    par_best = [Mc, eta, chieff, chia, lam, tc1, tc2]
+def lnlikelihood(Mc, eta, chieff, chia, lam, tc1):
+    par_best = [Mc, eta, chieff, chia, lam, tc1]
     return(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
 
 # Uniform prior on all parameter in their respective range
-def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
-    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005:
+def lnprior(Mc, eta, chieff, chia, lam, tc1):
+    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005:
         l = 0.0
     else:
         l =-np.inf
@@ -187,32 +187,32 @@ def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
 
 
 # Multiplying likelihood with prior
-def lnprob(Mc, eta, chieff, chia, lam, tc1, tc2):
-	lp = lnprior(Mc, eta, chieff, chia, lam, tc1, tc2)
+def lnprob(Mc, eta, chieff, chia, lam, tc1):
+	lp = lnprior(Mc, eta, chieff, chia, lam, tc1)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, tc1, tc2)
+	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, tc1)
 
 
 # Defining a function just for minimization routine to find a point to start
 def func(theta):
 	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
-	return -2.*lnprob(Mc, eta, chieff, chia, lam, tc1, tc2)
+	return -2.*lnprob(Mc, eta, chieff, chia, lam, tc1)
 
 def lnp(theta):
-	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
-	return lnprob(Mc, eta, chieff, chia, lam, tc1, tc2)
+	Mc, eta, chieff, chia, lam, tc1= theta
+	return lnprob(Mc, eta, chieff, chia, lam, tc1)
 
 
 #result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
-result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg]
 
 
 #start_time = time.perf_counter()
 #print("Started time.")
 # Set up the sampler.
 print("Setting up sampler for binning algorithm.")
-ndim, nwalkers = 7, 20
+ndim, nwalkers = 6, 20
 pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
@@ -241,12 +241,12 @@ chieff = pars[:, 2]
 chia = pars[:, 3]
 lam = pars[:, 4]
 tc1 = pars[:, 5]
-tc2 = pars[:, 6]
+#tc2 = pars[:, 6]
 
 lnlk_bin = np.zeros(len(Mc))
 
 for i in range(len(Mc)):
-    lnlk_bin[i] = lnlikelihood(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i], tc2[i])
+    lnlk_bin[i] = lnlikelihood(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i])
 
 print("Created lnlikelihood array using binning.")
 df = 1./128./4.
@@ -260,37 +260,38 @@ def overlap(A, B, f):
     return summ
 
 # Define log likelihood
-def lnlike_real(Mc, eta, chieff, chia, lam, tc1, tc2):
+def lnlike_real(Mc, eta, chieff, chia, lam):
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
     chis = chieff - delta * chia
-    s1z = chis + chia
-    s2z = chis - chia
-    # now update fiducial waveforms
-    h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-    h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
+    s1Z = chis + chia
+    s2Z = chis - chia
+    h1_L = hf3hPN(f, M, eta, s1z=s1Z, s2z=s2Z, Lam=lam)
+    #h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     # these are NOT shifted to the right merger times
-    h0_0 = [h0_L, h0_H]
+    #h1_1 = np.append(h1_L, h1_H)
     # these are shifted to the right merger times
-    h0 = [h0_L*np.exp(-2.0j*np.pi*f*tc1), h0_H*np.exp(-2.0j*np.pi*f*tc2)]
+    #sFT = np.append(LFT, HFT)
+    #h1 = np.append(h1_L*np.exp(-2.0j*np.pi*f*tc1), h1_H*np.exp(-2.0j*np.pi*f*tc2))
+    #print(len(np.asarray(h1_L)), len(np.asarray(LFT)), len(psd_L))
+    #print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(LFT)), np.amax(np.asarray(psd_L)))
+    return -0.5*overlap(np.asarray(LFT)-np.asarray(h1_L), np.asarray(LFT)-np.asarray(h1_L), f)
 
-    h = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
-    return -0.5*overlap(sFT-h, sFT-h, f)
 
-def lnprob_real(Mc, eta, chieff, chia, lam, tc1, tc2):
-	lp = lnprior(Mc, eta, chieff, chia, lam, tc1, tc2)
+def lnprob_real(Mc, eta, chieff, chia, lam, tc1):
+	lp = lnprior(Mc, eta, chieff, chia, lam, tc1)
 	if not np.isfinite(lp):
 		return -np.inf
 	return lp + lnlike_real(Mc, eta, chieff, chia, lam)
 
 def lnp_real(theta):
-	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
-	return lnprob(Mc, eta, chieff, chia, lam, tc1, tc2)
+	Mc, eta, chieff, chia, lam = theta
+	return lnprob(Mc, eta, chieff, chia, lam)
 
-result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
+result2 = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg]
 
 print("Setting up sampler for waveform.")
-ndim, nwalkers = 7, 20
+ndim, nwalkers = 5, 20
 pos = [result2 + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler2 = emcee.EnsembleSampler(nwalkers, ndim, lnp_real)
 #print pos
@@ -314,8 +315,8 @@ eta_real = pars_real[:, 1]
 chieff_real = pars_real[:, 2]
 chia_real = pars_real[:, 3]
 lam_real = pars_real[:, 4]
-tc1_real = pars_real[:, 5]
-tc2_real = pars_real[:, 6]
+#tc1_real = pars_real[:, 5]
+#tc2_real = pars_real[:, 6]
 
 lnlk_real = np.zeros(len(Mc_real))
 
@@ -333,5 +334,5 @@ for i in range(len(lnlk_bin)):
 
 print("Created del_lnlikelihood array.")
 pl.scatter(lnlk_bin, del_lnlk)
-pl.savefig('plot_test_del_lnlike_5k_1w.pdf')
+pl.savefig('plot_test_del_lnlike_005k_02w.pdf')
 pl.close()
