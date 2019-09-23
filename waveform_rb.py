@@ -259,7 +259,7 @@ def compute_rf(par, h0, fbin, fbin_ind):
     f = fbin  # only evaluate at frequency bin edges
     h0_bin = h0[fbin_ind]
 
-    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, tc, phi_c = par
+    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c, dtc = par
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
     chis = chieff - delta * chia
