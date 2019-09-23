@@ -109,7 +109,7 @@ chieff_avg = 0.5*(chieff_bounds[0]+chieff_bounds[1])
 chia_avg = 0.5*(chia_bounds[0]+chia_bounds[1])
 Lam_avg = 0.5*(Lam_bounds[0]+Lam_bounds[1])
 tc1_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
-tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
+#tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 
 # fiducial waveforms sampled at full frequency resolution
 h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
@@ -132,7 +132,7 @@ Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0
 print("Frequency binning done: # of bins = %d"%(Nbin))
 
 # next prepare summary data
-sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
+sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0_0)
 
 print("Prepared summary data.")
 
