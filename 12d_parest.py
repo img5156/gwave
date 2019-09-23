@@ -254,24 +254,24 @@ result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, ph
 #print("Started time.")
 # Set up the sampler.
 print("Setting up sampler.")
-ndim, nwalkers = 12, 30
+ndim, nwalkers = 12, 100
 pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
 
 # Clear and run the production chain.
 print("Running MCMC...")
-sampler.run_mcmc(pos, 500)
+sampler.run_mcmc(pos, 10000)
 #print (pos)
 print("Done.")
 
 # Removing first 1000 points as chain takes some time to stabilize
-burnin = 100
+burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("12d_emcee_sampler_rb3_05k_03w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1")
+np.savetxt("12d_emcee_sampler_rb3_10k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1")
 
-quit()
+#quit()
 # Plot for progression of sampler for each parameter
 pl.clf()
 fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
@@ -308,7 +308,7 @@ axes[5].set_ylabel(r"$TC_1$")
 
 
 fig1.tight_layout(h_pad=0.0)
-fig1.savefig("12d_line-time-plot_ext_005k_03w.pdf")
+fig1.savefig("12d_line-time-plot_ext_10k_1w.pdf")
 
 pl.clf()
 fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
@@ -344,5 +344,5 @@ axes[5].set_ylabel(r"$Phi_c$")
 
 
 fig1.tight_layout(h_pad=0.0)
-fig1.savefig("12d_line-time-plot_int_005k_03w.pdf")
+fig1.savefig("12d_line-time-plot_int_10k_1w.pdf")
 #fig.show()
