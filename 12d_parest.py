@@ -133,8 +133,8 @@ i_avg = 0.5*(i_bounds[0]+i_bounds[1])
 phi_c_avg = 0.5*(phi_c_bounds[0]+phi_c_bounds[1])
 
 # fiducial waveforms sampled at full frequency resolution
-h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
-h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
+h0_L = hf3hPN_L(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=LAM)
+h0_H = hf3hPN_H(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
@@ -185,8 +185,8 @@ TC1 += par_bf[11]                                  # merger time (L1)
 print('Updated parameters for the fiducial waveform')
 
 # now update fiducial waveforms
-h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
-h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
+h0_L = hf3hPN_L(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=LAM)
+h0_H = hf3hPN_H(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
