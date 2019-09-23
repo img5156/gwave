@@ -90,14 +90,14 @@ CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
 TC1 = -205.5556                                  # merger time (L1)
-TC2 = -205.5521                                   # merger time (H1)
-THETA = 
-PSI = 
-PHI = 
-DL = 
-I = 
-TC = 
-PHI_C = 
+#TC2 = -205.5521                                   # merger time (H1)
+THETA = -0.4                                      #declination
+PSI = np.pi
+PHI = 3.44
+DL = 40 
+I = np.pi/6
+#TC = 0.0
+PHI_C = 0.0
 
 # allowed bounds for parameters
 # change or further refine if desired
@@ -107,14 +107,14 @@ chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.999, 0.999]
 Lam_bounds = [0.0, 1000.0]
 dtc_bounds = [-0.005, 0.005]
-theta_bounds = []
-psi_bounds = []
-phi_bounds = []
-Dl_bounds = []
-i_bounds = []
-tc_bounds = []
-phi_c_bounds = []
-par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds, theta_bounds, psi_bounds, phi_bounds, Dl_bounds, i_bounds, tc_bounds, phi_c_bounds] + [dtc_bounds for k in range(ndtct)]
+theta_bounds = [-np.pi/2, np.pi/2]
+psi_bounds = [0, 2*np.pi]
+phi_bounds = [0, 2*np.pi]
+Dl_bounds = [10, 200]
+i_bounds = [0, np.pi]
+#tc_bounds = [-5, 5]
+phi_c_bounds = [-np.pi, np.pi]
+par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds, theta_bounds, psi_bounds, phi_bounds, Dl_bounds, i_bounds, phi_c_bounds] + [dtc_bounds for k in range(ndtct)]
 
 #Average value for all the bounds
 Mc_avg = 0.5*(Mc_bounds[0]+Mc_bounds[1])
@@ -123,22 +123,22 @@ chieff_avg = 0.5*(chieff_bounds[0]+chieff_bounds[1])
 chia_avg = 0.5*(chia_bounds[0]+chia_bounds[1])
 Lam_avg = 0.5*(Lam_bounds[0]+Lam_bounds[1])
 tc1_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
-tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
+#tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 theta_avg = 0.5*(theta_bounds[0]+theta_bounds[1])
 phi_avg = 0.5*(phi_bounds[0]+phi_bounds[1])
 psi_avg = 0.5*(psi_bounds[0]+psi_bounds[1])
 Dl_avg = 0.5*(Dl_bounds[0]+Dl_bounds[1])
 i_avg = 0.5*(i_bounds[0]+i_bounds[1])
-tc_avg = 0.5*(tc_bounds[0]+tc_bounds[1])
+#tc_avg = 0.5*(tc_bounds[0]+tc_bounds[1])
 phi_c_avg = 0.5*(phi_c_bounds[0]+phi_c_bounds[1])
 
 # fiducial waveforms sampled at full frequency resolution
-h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, TC, PHI_C)
-h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, TC, PHI_C)
+h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
+h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
 
 print('Constructed fiducial waveforms.')
 
@@ -178,16 +178,15 @@ PSI = par_bf[6]
 PHI = par_bf[7]
 DL = par_bf[8]
 I = par_bf[9]
-TC = par_bf[10]
-PHI_C = par_bf[11]
-TC1 += par_bf[12]                                  # merger time (L1)
+PHI_C = par_bf[10]
+TC1 += par_bf[11]                                  # merger time (L1)
 #TC2 += par_bf[13]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
 # now update fiducial waveforms
-h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, TC, PHI_C)
-h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, TC, PHI_C)
+h0_L = hf3hPN_L(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
+h0_H = hf3hPN_H(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM, THETA, PSI, PHI, DL, I, PHI_C)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
@@ -205,13 +204,13 @@ print('Updated summary data.')
 #par_best = [MC, ETA, CHIEFF, CHIA, LAM, 0.0, 0.0]
 #print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
 
-def lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1):
-    par_best = [Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1]
+def lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
+    par_best = [Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1]
     return(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
 
 # Uniform prior on all parameter in their respective range
-def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
-    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005:
+def lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
+    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -np.pi/2<theta<np.pi/2 and 0.0<psi<2.0*np.pi and 0.0<phi<2.0*np.pi and 10<Dl<200 and 0<i<np.pi and -np.pi<phi_c<np.pi:
         l = 0.0
     else:
         l =-np.inf
@@ -228,26 +227,26 @@ def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
 #    print(-0.5*overlap(Data-h, Data-h, ff))
 
 # Multiplying likelihood with prior
-def lnprob(Mc, eta, chieff, chia, lam, ):
-	lp = lnprior(Mc, eta, chieff, chia, lam, tc1, tc2)
+def lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
+	lp = lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, tc1, tc2)
+	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
 
 
 # Defining a function just for minimization routine to find a point to start
 def func(theta):
-	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1 = theta
-	return -2.*lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1)
+	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1 = theta
+	return -2.*lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
 
 def lnp(theta):
-	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1 = theta
-	return lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, tc, phi_c, tc1)
+	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1 = theta
+	return lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
 
 
 #result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
 #result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
-result = [Mc_bounds[0], eta_bounds[0], chieff_bounds[0], chia_bounds[0], Lam_bounds[0], dtc_bounds[0], dtc_bounds[0]]
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, phi_avg, Dl_avg, i_avg, phi_c_avg, tc1_avg]
 #Mc_ml, eta_ml, chieff_ml, chia_ml, lam_ml, tc1_ml, tc2_ml = result['x']
 
 
@@ -255,7 +254,7 @@ result = [Mc_bounds[0], eta_bounds[0], chieff_bounds[0], chia_bounds[0], Lam_bou
 #print("Started time.")
 # Set up the sampler.
 print("Setting up sampler.")
-ndim, nwalkers = 13, 30
+ndim, nwalkers = 12, 30
 pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
@@ -270,12 +269,12 @@ print("Done.")
 burnin = 100
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("13d_emcee_sampler_rb3_05k_03w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i tc phi_c tc1")
+np.savetxt("12d_emcee_sampler_rb3_05k_03w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1")
 
 quit()
 # Plot for progression of sampler for each parameter
 pl.clf()
-fig, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
+fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
 axes[0].plot(sampler.chain[:, :, 0].T, color="k", alpha=0.4)
 axes[0].yaxis.set_major_locator(MaxNLocator(5))
 axes[0].axhline(result[0], color="#888888", lw=2)
@@ -302,16 +301,48 @@ axes[4].yaxis.set_major_locator(MaxNLocator(5))
 axes[4].axhline(result[4], color="#888888", lw=2)
 axes[4].set_ylabel(r"$LAMBDA$")
 
-axes[5].plot(sampler.chain[:, :, 5].T, color="k", alpha=0.4)
+axes[5].plot(sampler.chain[:, :, 11].T, color="k", alpha=0.4)
 axes[5].yaxis.set_major_locator(MaxNLocator(5))
-axes[5].axhline(result[5], color="#888888", lw=2)
+axes[5].axhline(result[11], color="#888888", lw=2)
 axes[5].set_ylabel(r"$TC_1$")
 
-#axes[6].plot(sampler.chain[:, :, 6].T, color="k", alpha=0.4)
-#axes[6].yaxis.set_major_locator(MaxNLocator(5))
-#axes[6].axhline(tc2_ml, color="#888888", lw=2)
-#axes[6].set_ylabel(r"$TC_2$")
 
-fig.tight_layout(h_pad=0.0)
-fig.savefig("line-time-plot_of_the_prams_rb3_5k_1w_noopt_bound0.png")
+fig1.tight_layout(h_pad=0.0)
+fig1.savefig("12d_line-time-plot_ext_005k_03w.pdf")
+
+pl.clf()
+fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
+axes[0].plot(sampler.chain[:, :, 5].T, color="k", alpha=0.4)
+axes[0].yaxis.set_major_locator(MaxNLocator(5))
+axes[0].axhline(result[5], color="#888888", lw=2)
+axes[0].set_ylabel(r"$Theta$")
+
+axes[1].plot(sampler.chain[:, :, 6].T, color="k", alpha=0.4)
+axes[1].yaxis.set_major_locator(MaxNLocator(5))
+axes[1].axhline(result[6], color="#888888", lw=2)
+axes[1].set_ylabel(r"$Psi$")
+
+axes[2].plot(sampler.chain[:, :, 7].T, color="k", alpha=0.4)
+axes[2].yaxis.set_major_locator(MaxNLocator(5))
+axes[2].axhline(result[7], color="#888888", lw=2)
+axes[2].set_ylabel(r"$Phi$")
+
+axes[3].plot(sampler.chain[:, :, 8].T, color="k", alpha=0.4)
+axes[3].yaxis.set_major_locator(MaxNLocator(5))
+axes[3].axhline(result[8], color="#888888", lw=2)
+axes[3].set_ylabel(r"$D_l$")
+
+axes[4].plot(sampler.chain[:, :, 9].T, color="k", alpha=0.4)
+axes[4].yaxis.set_major_locator(MaxNLocator(5))
+axes[4].axhline(result[9], color="#888888", lw=2)
+axes[4].set_ylabel(r"$i$")
+
+axes[5].plot(sampler.chain[:, :, 10].T, color="k", alpha=0.4)
+axes[5].yaxis.set_major_locator(MaxNLocator(5))
+axes[5].axhline(result[10], color="#888888", lw=2)
+axes[5].set_ylabel(r"$Phi_c$")
+
+
+fig1.tight_layout(h_pad=0.0)
+fig1.savefig("12d_line-time-plot_int_005k_03w.pdf")
 #fig.show()
