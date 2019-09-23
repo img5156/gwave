@@ -267,7 +267,7 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     s1Z = chis + chia
     s2Z = chis - chia
     h1_L1 = hf3hPN(f, M, eta, s1z=s1Z, s2z=s2Z, Lam=lam)
-    h1_L = h1_L*np.exp(-2.0j*np.pi*f*tc1)
+    h1_L = h1_L1*np.exp(-2.0j*np.pi*f*tc1)
     #h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     # these are NOT shifted to the right merger times
     #h1_1 = np.append(h1_L, h1_H)
