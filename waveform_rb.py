@@ -29,7 +29,7 @@ def myHeaviside(x):
 
 
 # phase of h(f)
-def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, tc, phi_c):
+def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, phi_c):
     gt = 4.92549094830932e-6  # GN*Msun/c^3 in seconds
     EulerGamma = 0.57721566490153286060
     vlso = 1.0 / np.sqrt(6.0)
@@ -74,9 +74,9 @@ def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, La
     # tidal correction to phase
     # Lam is the reduced tidal deformation parameter \tilde\Lam
     # dLam is the asymmetric reduced tidal deformation parameter, which is usually negligible
-    #tidal = Lam * v10 * (- 39.0 / 2.0 - 3115.0 / 64.0 * v2) + dLam * 6595.0 / 364.0 * v12
+    tidal = Lam * v10 * (- 39.0 / 2.0 - 3115.0 / 64.0 * v2) + dLam * 6595.0 / 364.0 * v12
 
-    return 2*np.pi*f*tc - phi_c - np.pi/4 + (3.0 / 128.0 / eta / v5 * (
+    return  phi_c - np.pi/4 + (3.0 / 128.0 / eta / v5 * (
                 1.0 + 20.0 / 9.0 * (743.0 / 336.0 + 11.0 / 4.0 * eta) * v2 + (phis_15PN - 16.0 * np.pi) * v3 \
                 + 10.0 * (3058673.0 / 1016064.0 + 5429.0 / 1008.0 * eta + 617.0 / 144.0 * eta2 - sigma) * v4 \
                 + (38645.0 / 756.0 * np.pi - 65.0 / 9.0 * eta * np.pi - ga) * (1.0 + 3.0 * np.log(v / vlso)) * v5 \
@@ -85,7 +85,7 @@ def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, La
                    (
                                -15737765635.0 / 3048192.0 + 2255.0 * np.pi ** 2 / 12.0) * eta + 76055.0 / 1728.0 * eta2 - 127825.0 / 1296.0 * eta3 + phis_3PN) * v6 \
                 + (np.pi * (
-                    77096675.0 / 254016.0 + 378515.0 / 1512.0 * eta - 74045.0 / 756.0 * eta ** 2) + phis_35PN) * v7)) # +tidal)
+                    77096675.0 / 254016.0 + 378515.0 / 1512.0 * eta - 74045.0 / 756.0 * eta ** 2) + phis_35PN) * v7)) +tidal)
 
 
 # correction to modulus of h(f)
@@ -216,15 +216,15 @@ def hf3hPN_H(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, La
     
     return A0[0]*h_p + A0[1]*h_x
             
-def hf3hPN_L(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0, theta, psi, phi, Dl, i, tc, phi_c):
+def hf3hPN_L(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0, theta, psi, phi, Dl, i, phi_c):
     
     A0 = Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi)
     # note the convention for the sign in front of the phase
     
-    phase = Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, tc, phi_c)
+    phase = Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, phi_c)
     
     h_p = 0.5*(1+(np.cos(i))**2.0)*(f**(-7.0/6.0))*np.exp(1j*phase)/Dl
-    h_x = -0.5*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
+    h_x = (-1j)*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
     
     return A0[2]*h_p + A0[3]*h_x
 
@@ -267,7 +267,7 @@ def compute_rf(par, h0, fbin, fbin_ind):
     s2z = chis - chia
 
     # waveform ratio
-    r = hf3hPN_L(f, M, eta, s1z=s1z, s2z=s2z, Lam=Lam, theta, psi, phi, Dl, i, tc, phi_c) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
+    r = hf3hPN_L(f, M, eta, s1z=s1z, s2z=s2z, Lam=Lam, theta, psi, phi, Dl, i, phi_c) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
     r0 = 0.5 * (r[:-1] + r[1:])
     r1 = (r[1:] - r[:-1]) / (f[1:] - f[:-1])
 
@@ -288,9 +288,9 @@ def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
 
     lnl = 0.0
 
-    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, tc, phi_c = par[0:12]
-    dtc = par[12:]
-    par_notc = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, tc, phi_c]
+    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c = par[0:11]
+    dtc = par[11:]
+    par_notc = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c]
 
     # relative waveform
     rf = [compute_rf(par_notc + [dtc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
@@ -327,9 +327,8 @@ def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=
     phi_bf = res[7]
     Dl_bf = res[8]
     i_bf = res[9]
-    tc_bf = res[10]
-    phi_c_bf = res[11]
-    dtc_bf = res[12:]
+    phi_c_bf = res[10]
+    dtc_bf = res[11:]
 
     # output best-fit parameters if requested
     if verbose is True:
@@ -344,7 +343,6 @@ def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=
         print('phi_bf =', phi_bf)
         print('Dl_bf =', Dl_bf)
         print('i_bf =', i_bf)
-        print('tc_bf =', tc_bf)
         print('phi_c_bf =', phi_c_bf)
         print('dtc_bf =', dtc_bf)
 
