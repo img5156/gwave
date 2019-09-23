@@ -29,7 +29,7 @@ def myHeaviside(x):
 
 
 # phase of h(f)
-def Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, phi_c):
+def Phif3hPN(f, M, eta, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0):
     gt = 4.92549094830932e-6  # GN*Msun/c^3 in seconds
     EulerGamma = 0.57721566490153286060
     vlso = 1.0 / np.sqrt(6.0)
@@ -122,7 +122,7 @@ def Af3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=
                    4.0 * v)) \
            + v7 * (- 1349.0 / 24192.0 * eta2 - 72221.0 / 24192.0 * eta - 5111593.0 / 2709504.0) * np.pi
 
-def Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi):
+def Af3hPN_rb(f, M, eta, theta, psi, phi, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0):
     gt = 4.92549094830932e-6  # GN*Msun/c^3 in seconds
     EulerGamma = 0.57721566490153286060
     delta = np.sqrt(1.0 - 4.0 * eta)
@@ -204,19 +204,19 @@ def hf3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=
     # note the convention for the sign in front of the phase
     return pre * A0 * A * np.exp(-1.0j * Phi)
             
-def hf3hPN_H(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0, theta, psi, phi, Dl, i, tc, phi_c):
+def hf3hPN_H(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
  
     A0 = Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi)
     # note the convention for the sign in front of the phase
     
-    phase = Phif3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, tc, phi_c)
+    phase = Phif3hPN(f, M, eta,  phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     
     h_p = 0.5*(1+(np.cos(i))**2.0)*(f**(-7.0/6.0))*np.exp(1j*phase)/Dl
     h_x = -0.5*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
     
     return A0[0]*h_p + A0[1]*h_x
             
-def hf3hPN_L(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0, theta, psi, phi, Dl, i, phi_c):
+def hf3hPN_L(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
     
     A0 = Af3hPN_rb(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, theta, psi, phi)
     # note the convention for the sign in front of the phase
@@ -267,7 +267,7 @@ def compute_rf(par, h0, fbin, fbin_ind):
     s2z = chis - chia
 
     # waveform ratio
-    r = hf3hPN_L(f, M, eta, s1z=s1z, s2z=s2z, Lam=Lam, theta, psi, phi, Dl, i, phi_c) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
+    r = hf3hPN_L(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1z=s1z, s2z=s2z, Lam=Lam) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
     r0 = 0.5 * (r[:-1] + r[1:])
     r1 = (r[1:] - r[:-1]) / (f[1:] - f[:-1])
 
