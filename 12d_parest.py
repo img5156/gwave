@@ -94,8 +94,8 @@ TC1 = -205.5556                                  # merger time (L1)
 THETA = -0.4                                      #declination
 PSI = np.pi
 PHI = 3.44
-DL = 40 
-I = np.pi/6
+DL = 40.0
+I = np.pi/6.0
 #TC = 0.0
 PHI_C = 0.0
 
@@ -107,10 +107,10 @@ chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.999, 0.999]
 Lam_bounds = [0.0, 1000.0]
 dtc_bounds = [-0.005, 0.005]
-theta_bounds = [-np.pi/2, np.pi/2]
-psi_bounds = [0, 2*np.pi]
-phi_bounds = [0, 2*np.pi]
-Dl_bounds = [10, 200]
+theta_bounds = [-np.pi/2.0, np.pi/2.0]
+psi_bounds = [0.0, 2.0*np.pi]
+phi_bounds = [0.0, 2.0*np.pi]
+Dl_bounds = [10.0, 200.0]
 i_bounds = [0, np.pi]
 #tc_bounds = [-5, 5]
 phi_c_bounds = [-np.pi, np.pi]
@@ -180,7 +180,7 @@ DL = par_bf[8]
 I = par_bf[9]
 PHI_C = par_bf[10]
 TC1 += par_bf[11]                                  # merger time (L1)
-#TC2 += par_bf[13]                                  # merger time (H1)
+#TC2 += par_bf[12]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
