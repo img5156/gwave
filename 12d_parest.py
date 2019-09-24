@@ -89,8 +89,8 @@ CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
-TC1 = 0                                  # merger time (L1)
-TC2 = 0                                   # merger time (H1)
+TC1 = 0.0                                  # merger time (L1)
+TC2 = 0.0                                   # merger time (H1)
 THETA = -0.4                                      #declination
 PSI = np.pi
 PHI = 3.44
@@ -123,7 +123,7 @@ chieff_avg = 0.5*(chieff_bounds[0]+chieff_bounds[1])
 chia_avg = 0.5*(chia_bounds[0]+chia_bounds[1])
 Lam_avg = 0.5*(Lam_bounds[0]+Lam_bounds[1])
 tc1_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
-#tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
+tc2_avg = 0.5*(dtc_bounds[0]+dtc_bounds[1])
 theta_avg = 0.5*(theta_bounds[0]+theta_bounds[1])
 phi_avg = 0.5*(phi_bounds[0]+phi_bounds[1])
 psi_avg = 0.5*(psi_bounds[0]+psi_bounds[1])
@@ -246,7 +246,7 @@ def lnp(theta):
 
 #result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
 #result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
-result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, phi_avg, Dl_avg, i_avg, phi_c_avg, tc1_avg, tc1_avg]
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, phi_avg, Dl_avg, i_avg, phi_c_avg, tc1_avg, tc2_avg]
 #Mc_ml, eta_ml, chieff_ml, chia_ml, lam_ml, tc1_ml, tc2_ml = result['x']
 
 
