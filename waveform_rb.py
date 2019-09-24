@@ -406,6 +406,7 @@ def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=
         print('Dl_bf =', Dl_bf)
         print('i_bf =', i_bf)
         print('phi_c_bf =', phi_c_bf)
-        print('dtc_bf =', dtc_bf)
+        print('tc1_bf =', tc1_bf)
+        print('tc2_bf =', tc2_bf)
 
     return res
