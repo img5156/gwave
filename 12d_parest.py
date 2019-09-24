@@ -114,7 +114,7 @@ Dl_bounds = [10.0, 200.0]
 i_bounds = [0, np.pi]
 #tc_bounds = [-5, 5]
 phi_c_bounds = [-np.pi, np.pi]
-par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds, theta_bounds, psi_bounds, phi_bounds, Dl_bounds, i_bounds, phi_c_bounds] + [dtc_bounds for k in range(ndtct)]
+par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds, theta_bounds, psi_bounds, phi_bounds, Dl_bounds, i_bounds, phi_c_bounds, dtc_bounds, dtc_bounds]
 
 #Average value for all the bounds
 Mc_avg = 0.5*(Mc_bounds[0]+Mc_bounds[1])
