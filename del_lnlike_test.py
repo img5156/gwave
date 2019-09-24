@@ -135,7 +135,7 @@ print('Updated parameters for the fiducial waveform')
 def f_isco(M):
     return 1./6.**(3./2.)/np.pi/M
 
-def htilde(Mc, eta, mu2=1.0, mu3=1.0, mu4=1.0, mu5=1.0, e2=1.0, e3=1.0, e4=1.0):
+def htilde(Mc, eta, tc1, mu2=1.0, mu3=1.0, mu4=1.0, mu5=1.0, e2=1.0, e3=1.0, e4=1.0):
     M = Mc/eta**(3./5.)
     v  = (np.pi*M*f)**(1./3.)
     flso = f_isco(M)
@@ -169,7 +169,7 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     chis = chieff - delta * chia
     s1Z = chis + chia
     s2Z = chis - chia
-    h1_L = htilde(Mc, eta)
+    h1_L = htilde(Mc, eta, tc1)
     #h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     # these are NOT shifted to the right merger times
     #h1_1 = np.append(h1_L, h1_H)
