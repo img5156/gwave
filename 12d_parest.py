@@ -157,8 +157,9 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 
 print("Prepared summary data.")
 
+par = [MC, ETA, CHIEFF, CHIA, LAM, THETA, PSI, PHI, DL, I, PHI_C, TC1, TC2]
 # find (nearly) best-fit parameters by maximizing the likelihood
-par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, atol=1e-10, verbose=True)
+par_bf = get_best_fit(sdat, par, par_bounds, h0_0, fbin, fbin_ind, ndtct, atol=1e-10, verbose=True)
 
 # update the best-fit parameters
 MC = par_bf[0]                                       # detector frame chirp mass [Msun]
