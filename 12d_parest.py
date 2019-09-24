@@ -29,7 +29,7 @@ from binning import *
 #   compute likelihood using summary data
 
 # number of detectors (Livingston and Hanford)
-ndtct = 1
+ndtct = 2
 
 
 # Since loading large data file is actually slow, we could cheat here by loading pre-computed data
@@ -89,8 +89,8 @@ CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
-TC1 = -205.5556                                  # merger time (L1)
-#TC2 = -205.5521                                   # merger time (H1)
+TC1 = 0                                  # merger time (L1)
+TC2 = 0                                   # merger time (H1)
 THETA = -0.4                                      #declination
 PSI = np.pi
 PHI = 3.44
@@ -138,7 +138,7 @@ h0_H = hf3hPN_H(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Constructed fiducial waveforms.')
 
@@ -180,7 +180,7 @@ DL = par_bf[8]
 I = par_bf[9]
 PHI_C = par_bf[10]
 TC1 += par_bf[11]                                  # merger time (L1)
-#TC2 += par_bf[12]                                  # merger time (H1)
+TC2 += par_bf[12]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
@@ -190,7 +190,7 @@ h0_H = hf3hPN_H(f, M, ETA, THETA, PSI, PHI, DL, I, PHI_C, s1z=S1Z, s2z=S2Z, Lam=
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Updated fiducial waveforms.')
 
@@ -204,13 +204,13 @@ print('Updated summary data.')
 #par_best = [MC, ETA, CHIEFF, CHIA, LAM, 0.0, 0.0]
 #print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
 
-def lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
-    par_best = [Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1]
-    return(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
+def lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2):
+    par = [Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2]
+    return(-lnlike(par, sdat, h0, fbin, fbin_ind, ndtct))
 
 # Uniform prior on all parameter in their respective range
-def lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
-    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -np.pi/2<theta<np.pi/2 and 0.0<psi<2.0*np.pi and 0.0<phi<2.0*np.pi and 10<Dl<200 and 0<i<np.pi and -np.pi<phi_c<np.pi:
+def lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2):
+    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005 and -np.pi/2<theta<np.pi/2 and 0.0<psi<2.0*np.pi and 0.0<phi<2.0*np.pi and 10<Dl<200 and 0<i<np.pi and -np.pi<phi_c<np.pi:
         l = 0.0
     else:
         l =-np.inf
@@ -227,26 +227,26 @@ def lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
 #    print(-0.5*overlap(Data-h, Data-h, ff))
 
 # Multiplying likelihood with prior
-def lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1):
-	lp = lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
+def lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2):
+	lp = lnprior(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2)
 	if not np.isfinite(lp):
 		return -np.inf
-	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
+	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2)
 
 
 # Defining a function just for minimization routine to find a point to start
 def func(theta):
-	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1 = theta
-	return -2.*lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
+	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2 = theta
+	return -2.*lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2)
 
 def lnp(theta):
-	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1 = theta
-	return lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1)
+	Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2 = theta
+	return lnprob(Mc, eta, chieff, chia, lam, theta, psi, phi, Dl, i, phi_c, tc1, tc2)
 
 
 #result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
 #result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
-result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, phi_avg, Dl_avg, i_avg, phi_c_avg, tc1_avg]
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, phi_avg, Dl_avg, i_avg, phi_c_avg, tc1_avg, tc1_avg]
 #Mc_ml, eta_ml, chieff_ml, chia_ml, lam_ml, tc1_ml, tc2_ml = result['x']
 
 
@@ -254,14 +254,14 @@ result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, theta_avg, psi_avg, ph
 #print("Started time.")
 # Set up the sampler.
 print("Setting up sampler.")
-ndim, nwalkers = 12, 100
+ndim, nwalkers = 13, 100
 pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
 
 # Clear and run the production chain.
 print("Running MCMC...")
-sampler.run_mcmc(pos, 10000)
+sampler.run_mcmc(pos, 5000)
 #print (pos)
 print("Done.")
 
@@ -269,12 +269,12 @@ print("Done.")
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("12d_emcee_sampler_rb3_10k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1")
+np.savetxt("13d_emcee_sampler_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1 tc2")
 
 #quit()
 # Plot for progression of sampler for each parameter
 pl.clf()
-fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
+fig1, axes = pl.subplots(7, 1, sharex=True, figsize=(8, 9))
 axes[0].plot(sampler.chain[:, :, 0].T, color="k", alpha=0.4)
 axes[0].yaxis.set_major_locator(MaxNLocator(5))
 axes[0].axhline(result[0], color="#888888", lw=2)
@@ -306,9 +306,13 @@ axes[5].yaxis.set_major_locator(MaxNLocator(5))
 axes[5].axhline(result[11], color="#888888", lw=2)
 axes[5].set_ylabel(r"$TC_1$")
 
-
+axes[5].plot(sampler.chain[:, :, 12].T, color="k", alpha=0.4)
+axes[5].yaxis.set_major_locator(MaxNLocator(5))
+axes[5].axhline(result[12], color="#888888", lw=2)
+axes[5].set_ylabel(r"$TC_2$")
 fig1.tight_layout(h_pad=0.0)
-fig1.savefig("12d_line-time-plot_ext_10k_1w.pdf")
+
+fig1.savefig("13d_line-time-plot_ext_5k_1w.pdf")
 
 pl.clf()
 fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
@@ -344,5 +348,5 @@ axes[5].set_ylabel(r"$Phi_c$")
 
 
 fig1.tight_layout(h_pad=0.0)
-fig1.savefig("12d_line-time-plot_int_10k_1w.pdf")
+fig1.savefig("13d_line-time-plot_int_5k_1w.pdf")
 #fig.show()
