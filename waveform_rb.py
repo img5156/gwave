@@ -389,8 +389,9 @@ def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=
     Dl_bf = res[8]
     i_bf = res[9]
     phi_c_bf = res[10]
-    dtc_bf = res[11:]
-
+    #dtc_bf = res[11:]
+    tc1_bf = res[11]
+    tc2_bf = res[12]
     # output best-fit parameters if requested
     if verbose is True:
         print('log-likelihood = ', lnl)
