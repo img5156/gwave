@@ -375,7 +375,7 @@ def get_best_fit(sdat, par, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, 
     # use differential evolution from scipy
     #output = differential_evolution(lnlike, bounds=par_bounds, \
     #                                args=(sdat, h0, fbin, fbin_ind, ndtct), atol=atol, maxiter=maxiter)
-    output = optimize.minimize(lnlike, par, bounds=par_bounds, args = (sdat, h0, fbin, fbin_ind, ndtct))
+    output = sp.optimize.minimize(lnlike, par, bounds=par_bounds, args = (sdat, h0, fbin, fbin_ind, ndtct))
     
     res = output['x']
     lnl = -output['fun']
