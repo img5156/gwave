@@ -351,8 +351,8 @@ def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
     #par_notc = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c]
     #par_L = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c, par[11]]
     #par_H = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c, par[12]]
-    par_L = par[1:11]+[par[11]]
-    par_H = par[1:11]+[par[12]]
+    par_L = [par[i] for i in range(len(par)-2)]+[par[11]]
+    par_H = [par[i] for i in range(len(par)-2)]+[par[12]]
     # relative waveform
     #rf = [compute_rf(par_notc + [dtc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
     rf = [compute_rf_L(par_L, h0[0], fbin, fbin_ind), compute_rf_H(par_H, h0[1], fbin, fbin_ind)]
@@ -375,7 +375,7 @@ def get_best_fit(sdat, par, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, 
     # use differential evolution from scipy
     #output = differential_evolution(lnlike, bounds=par_bounds, \
     #                                args=(sdat, h0, fbin, fbin_ind, ndtct), atol=atol, maxiter=maxiter)
-    output = sp.optimize.minimize(lnlike, par, bounds=par_bounds, args = (sdat, h0, fbin, fbin_ind, ndtct))
+    output = minimize(lnlike, par, bounds=par_bounds, args = (sdat, h0, fbin, fbin_ind, ndtct))
     
     res = output['x']
     lnl = -output['fun']
