@@ -366,15 +366,17 @@ def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
 
 
 # ----------- find best-fit parameters using minimization ------------- #
-def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=1e-3, verbose=False):
+def get_best_fit(sdat, par, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=1e-3, verbose=False):
     """
     Find the best-fit binary parameters that fit the data (with detector noise added)
     sdat is the summary data
     par_bounds is a list of allowed range for all parameters
     """
     # use differential evolution from scipy
-    output = differential_evolution(lnlike, bounds=par_bounds, \
-                                    args=(sdat, h0, fbin, fbin_ind, ndtct), atol=atol, maxiter=maxiter)
+    #output = differential_evolution(lnlike, bounds=par_bounds, \
+    #                                args=(sdat, h0, fbin, fbin_ind, ndtct), atol=atol, maxiter=maxiter)
+    output = optimize.minimize(lnlike, par, bounds=par_bounds, args = (sdat, h0, fbin, fbin_ind, ndtct))
+    
     res = output['x']
     lnl = -output['fun']
 
