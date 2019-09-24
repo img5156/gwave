@@ -205,28 +205,36 @@ def hf3hPN(f, M, eta, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=
     return pre * A0 * A * np.exp(-1.0j * Phi)
             
 def hf3hPN_H(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
- 
+    pre = 3.6686934875530996e-19  # (GN*Msun/c^3)^(5/6)/Hz^(7/6)*c/Mpc/sec
+    Mchirp = M * eta ** 0.6
+    A1 = Mchirp ** (5.0 / 6.0) / (f + 1e-100) ** (7.0 / 6.0) / Deff / np.pi ** (2.0 / 3.0) * np.sqrt(5.0 / 24.0)
+    
     A0 = Af3hPN_rb(f, M, eta, theta, psi, phi, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     # note the convention for the sign in front of the phase
     
     phase = Phif3hPN(f, M, eta,  phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
+    A = Af3hPN(f, M, eta, s1x=s1x, s1y=s1y, s1z=s1z, s2x=s2x, s2y=s2y, s2z=s2z, Lam=Lam, dLam=dLam)
     
     h_p = 0.5*(1+(np.cos(i))**2.0)*(f**(-7.0/6.0))*np.exp(1j*phase)/Dl
-    h_x = -0.5*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
+    h_x = (-1j)*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
     
-    return A0[0]*h_p + A0[1]*h_x
+    return pre*A1*A*(A0[0]*h_p + A0[1]*h_x)
             
 def hf3hPN_L(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0, Deff=1.0):
+    pre = 3.6686934875530996e-19  # (GN*Msun/c^3)^(5/6)/Hz^(7/6)*c/Mpc/sec
+    Mchirp = M * eta ** 0.6
+    A1 = Mchirp ** (5.0 / 6.0) / (f + 1e-100) ** (7.0 / 6.0) / Deff / np.pi ** (2.0 / 3.0) * np.sqrt(5.0 / 24.0)
     
     A0 = Af3hPN_rb(f, M, eta, theta, psi, phi, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
     # note the convention for the sign in front of the phase
     
     phase = Phif3hPN(f, M, eta, phi_c, s1x=0.0, s1y=0.0, s1z=0.0, s2x=0.0, s2y=0.0, s2z=0.0, Lam=0.0, dLam=0.0)
+    A = Af3hPN(f, M, eta, s1x=s1x, s1y=s1y, s1z=s1z, s2x=s2x, s2y=s2y, s2z=s2z, Lam=Lam, dLam=dLam)
     
     h_p = 0.5*(1+(np.cos(i))**2.0)*(f**(-7.0/6.0))*np.exp(1j*phase)/Dl
     h_x = (-1j)*(np.cos(i)/Dl)*(f**(-7.0/6.0))*np.exp(1j*phase)
-    
-    return A0[2]*h_p + A0[3]*h_x
+   
+    return pre*A1*A*(A0[2]*h_p + A0[3]*h_x)
 
 
 # compute matched filter SNR^2
@@ -247,7 +255,33 @@ def mfSNR2_amp_phic_max_sdat(sdat, k, rdata):
 
 
 # compute relative waveform r(f) = h(f)/h0(f)
-def compute_rf(par, h0, fbin, fbin_ind):
+def compute_rf_H(par, h0, fbin, fbin_ind):
+    """
+    compute the ratio r(f) = h(f)/h0(f) where h0(f) is some fiducial waveform and h(f) correspond to parameter combinations par
+    h0: fiducial waveform (it is important to pass one that is NOT shifted to the right merger time)
+    fbin: frequency bin edges
+    par is list of parameters: [Mc, eta, chieff, chia, Lam, dtc]
+    tc: best-fit time
+    """
+
+    f = fbin  # only evaluate at frequency bin edges
+    h0_bin = h0[fbin_ind]
+
+    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c, dtc = par
+    M = Mc / eta ** 0.6
+    delta = np.sqrt(1.0 - 4.0 * eta)
+    chis = chieff - delta * chia
+    s1z = chis + chia
+    s2z = chis - chia
+
+    # waveform ratio
+    r = hf3hPN_(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1z=s1z, s2z=s2z, Lam=Lam) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
+    r0 = 0.5 * (r[:-1] + r[1:])
+    r1 = (r[1:] - r[:-1]) / (f[1:] - f[:-1])
+
+    return np.array([r0, r1], dtype=np.complex128)
+
+def compute_rf_L(par, h0, fbin, fbin_ind):
     """
     compute the ratio r(f) = h(f)/h0(f) where h0(f) is some fiducial waveform and h(f) correspond to parameter combinations par
     h0: fiducial waveform (it is important to pass one that is NOT shifted to the right merger time)
@@ -273,7 +307,31 @@ def compute_rf(par, h0, fbin, fbin_ind):
 
     return np.array([r0, r1], dtype=np.complex128)
 
+def compute_rf(par, h0, fbin, fbin_ind):
+    """
+    compute the ratio r(f) = h(f)/h0(f) where h0(f) is some fiducial waveform and h(f) correspond to parameter combinations par
+    h0: fiducial waveform (it is important to pass one that is NOT shifted to the right merger time)
+    fbin: frequency bin edges
+    par is list of parameters: [Mc, eta, chieff, chia, Lam, dtc]
+    tc: best-fit time
+    """
 
+    f = fbin  # only evaluate at frequency bin edges
+    h0_bin = h0[fbin_ind]
+
+    Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c, dtc = par
+    M = Mc / eta ** 0.6
+    delta = np.sqrt(1.0 - 4.0 * eta)
+    chis = chieff - delta * chia
+    s1z = chis + chia
+    s2z = chis - chia
+
+    # waveform ratio
+    r = hf3hPN_L(f, M, eta, theta, psi, phi, Dl, i, phi_c, s1z=s1z, s2z=s2z, Lam=Lam) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
+    r0 = 0.5 * (r[:-1] + r[1:])
+    r1 = (r[1:] - r[:-1]) / (f[1:] - f[:-1])
+
+    return np.array([r0, r1], dtype=np.complex128)
 # compute minus log-likelihood
 def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
     """
@@ -293,8 +351,9 @@ def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
     par_notc = [Mc, eta, chieff, chia, Lam, theta, psi, phi, Dl, i, phi_c]
 
     # relative waveform
-    rf = [compute_rf(par_notc + [dtc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
-
+    #rf = [compute_rf(par_notc + [dtc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
+    rf = [compute_rf_L(par, h0, fbin, fbin_ind), compute_rf_H(par, h0, fbin, fbin_ind)]
+    
     # Total log-likelihood is the sum of all detectors
     for k in range(ndtct):
         # The log-likelihood function is analytically maximized with respect to the phase constant and the overall amplitude
