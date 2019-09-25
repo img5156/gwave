@@ -139,8 +139,8 @@ TC1 += par_bf[5]                                  # merger time (L1)
 
 print('Updated parameters for the fiducial waveform')
 
-def f_isco(M):
-    return 1./6.**(3./2.)/np.pi/M
+#def f_isco(M):
+#    return 1./6.**(3./2.)/np.pi/M
 
 #def htilde(Mc, eta, tc1, mu2=1.0, mu3=1.0, mu4=1.0, mu5=1.0, e2=1.0, e3=1.0, e4=1.0):
  #   M = Mc/eta**(3./5.)
