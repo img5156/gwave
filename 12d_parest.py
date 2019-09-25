@@ -306,7 +306,6 @@ axes[5].yaxis.set_major_locator(MaxNLocator(5))
 axes[5].axhline(result[11], color="#888888", lw=2)
 axes[5].set_ylabel(r"$TC_1$")
 
-<<<<<<< HEAD
 axes[6].plot(sampler.chain[:, :, 12].T, color="k", alpha=0.4)
 axes[6].yaxis.set_major_locator(MaxNLocator(5))
 axes[6].axhline(result[12], color="#888888", lw=2)
