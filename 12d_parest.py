@@ -262,7 +262,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 
 # Clear and run the production chain.
 print("Running MCMC...")
-sampler.run_mcmc(pos, 5000)
+sampler.run_mcmc(pos, 10000)
 #print (pos)
 print("Done.")
 
@@ -270,8 +270,7 @@ print("Done.")
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("13d_emcee_sampler_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1 tc2")
-
+np.savetxt("13d_emcee_sampler_10k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1 tc2")
 #quit()
 # Plot for progression of sampler for each parameter
 pl.clf()
@@ -307,16 +306,18 @@ axes[5].yaxis.set_major_locator(MaxNLocator(5))
 axes[5].axhline(result[11], color="#888888", lw=2)
 axes[5].set_ylabel(r"$TC_1$")
 
-axes[5].plot(sampler.chain[:, :, 12].T, color="k", alpha=0.4)
-axes[5].yaxis.set_major_locator(MaxNLocator(5))
-axes[5].axhline(result[12], color="#888888", lw=2)
-axes[5].set_ylabel(r"$TC_2$")
+<<<<<<< HEAD
+axes[6].plot(sampler.chain[:, :, 12].T, color="k", alpha=0.4)
+axes[6].yaxis.set_major_locator(MaxNLocator(5))
+axes[6].axhline(result[12], color="#888888", lw=2)
+axes[6].set_ylabel(r"$TC_2$")
+
 fig1.tight_layout(h_pad=0.0)
 
-fig1.savefig("13d_line-time-plot_ext_5k_1w.pdf")
+fig1.savefig("13d_line-time-plot_ext_10k_1w.pdf")
 
 pl.clf()
-fig1, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
+fig2, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
 axes[0].plot(sampler.chain[:, :, 5].T, color="k", alpha=0.4)
 axes[0].yaxis.set_major_locator(MaxNLocator(5))
 axes[0].axhline(result[5], color="#888888", lw=2)
@@ -348,6 +349,6 @@ axes[5].axhline(result[10], color="#888888", lw=2)
 axes[5].set_ylabel(r"$Phi_c$")
 
 
-fig1.tight_layout(h_pad=0.0)
-fig1.savefig("13d_line-time-plot_int_5k_1w.pdf")
+fig2.tight_layout(h_pad=0.0)
+fig2.savefig("13d_line-time-plot_int_10k_1w.pdf")
 #fig.show()
