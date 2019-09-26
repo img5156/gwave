@@ -53,6 +53,9 @@ psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='sam
 psd_H = 2.0*np.convolve(np.absolute(HFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd = [psd_L, psd_H]
 
+np.savetxt('data/psd_L_full.txt',zip(psd_L))
+np.savetxt('data/psd_H_full.txt',zip(psd_H))
+
 pl.loglog(f,psd_L)
 pl.savefig('figures/plot_psd_t_full.pdf')
 pl.close()
