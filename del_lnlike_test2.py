@@ -219,6 +219,8 @@ def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*df
     return summ
 
+b = overlap(np.asarray(h0_L),np.asarray(h0_L),f)
+
 def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     M = Mc / eta ** 0.6
     delta = np.sqrt(1.0 - 4.0 * eta)
@@ -235,7 +237,6 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     print(len(np.asarray(h1_L)), len(np.asarray(LFT)), len(psd_L))
     print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(h0_L)), np.amax(np.asarray(psd_L)))
     a = overlap(np.asarray(h1_L),np.asarray(h1_L),f)
-    b = overlap(np.asarray(h0_L),np.asarray(h0_L),f)
     c = overlap(np.asarray(h0_L),np.asarray(h1_L),f)
     return (c/np.sqrt(a*b))
 
