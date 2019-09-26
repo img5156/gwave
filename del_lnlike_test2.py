@@ -32,20 +32,20 @@ print('Finished loading LIGO data.')
 
 # time-domain and frequency-domain grid
 t = np.linspace(0, T, n_sample+1)[:-1]
-f1 = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
-f = np.zeros(len(f1)-1)
-for i in range(len(f)):
-	f[i] = f1[i+1]
+f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
+#f = np.zeros(len(f1)-1)
+#for i in range(len(f)):
+#	f[i] = f1[i+1]
 # apply a Tukey window function to eliminate the time-domain boundary ringing
 tukey = sp.signal.tukey(n_sample, alpha=0.1)
-LFT1 = np.fft.rfft(L1*tukey)/n_sample
-LFT = np.zeros(len(LFT1)-1)
-for i in range(len(LFT)):
-	LFT[i] = LFT1[i+1]
+LFT = np.fft.rfft(L1*tukey)/n_sample
+#LFT = np.zeros(len(LFT1)-1)
+#for i in range(len(LFT)):
+#	LFT[i] = LFT1[i+1]
 HFT = np.fft.rfft(H1*tukey)/n_sample
-HFT = np.zeros(len(HFT1)-1)
-for i in range(len(HFT)):
-	HFT[i] = HFT1[i+1]
+#HFT = np.zeros(len(HFT1)-1)
+#for i in range(len(HFT)):
+#	HFT[i] = HFT1[i+1]
 # estimate PSDs for both L1 and H1
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd_H = 2.0*np.convolve(np.absolute(HFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
@@ -99,7 +99,7 @@ h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H]
 
 print('Constructed fiducial waveforms.')
 
@@ -135,7 +135,7 @@ S1Z = CHIS + CHIA                                        # aligned spin componen
 S2Z = CHIS - CHIA                                # aligned spin component for the secondary
 LAM = par_bf[4]                                      # reduced tidal deformation parameter
 TC1 += par_bf[5]                                  # merger time (L1)
-TC2 += par_bf[6]                                  # merger time (H1)
+#TC2 += par_bf[6]                                  # merger time (H1)
 
 print('Updated parameters for the fiducial waveform')
 
@@ -144,7 +144,7 @@ h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
-h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
+h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1)]
 
 print('UPDATED fiducial waveforms.')
 
@@ -154,6 +154,62 @@ def lnprior(Mc, eta, chieff, chia, lam, tc1):
     else:
         l =-np.inf
     return l
+
+def lnprob(Mc, eta, chieff, chia, lam, tc1):
+	lp = lnprior(Mc, eta, chieff, chia, lam, tc1)
+	if not np.isfinite(lp):
+		return -np.inf
+	return lp + lnlikelihood(Mc, eta, chieff, chia, lam, tc1)
+
+
+# Defining a function just for minimization routine to find a point to start
+def func(theta):
+	Mc, eta, chieff, chia, lam, tc1, tc2 = theta
+	return -2.*lnprob(Mc, eta, chieff, chia, lam, tc1)
+
+def lnp(theta):
+	Mc, eta, chieff, chia, lam, tc1= theta
+	return lnprob(Mc, eta, chieff, chia, lam, tc1)
+
+
+#result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg]
+
+
+#start_time = time.perf_counter()
+#print("Started time.")
+# Set up the sampler.
+print("Setting up sampler for binning algorithm.")
+ndim, nwalkers = 6, 20
+pos = [result + 1e-4*np.random.randn(ndim) for i in range(nwalkers)]
+sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
+#print pos
+
+# Clear and run the production chain.
+print("Running MCMC for binning algorithm...")
+sampler.run_mcmc(pos, 50)
+#print (pos)
+print("Done.")
+
+
+# Removing first 100 points as chain takes some time to stabilize
+burnin = 10
+samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
+print("Saving data in file.")
+np.savetxt("test_bin_del_lnlike_005k_02w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1")
+
+#print("--- %s seconds ---" % (time.perf_counter() - start_time))
+
+print("Loading the saved data.")
+pars = np.loadtxt('test_bin_del_lnlike_005k_02w.dat')
+
+Mc = pars[:, 0]
+eta = pars[:, 1]
+chieff = pars[:, 2]
+chia = pars[:, 3]
+lam = pars[:, 4]
+tc1 = pars[:, 5]
+#tc2 = pars[:, 6]
 
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*df
@@ -172,9 +228,6 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     # these are shifted to the right merger times
     #sFT = np.append(LFT, HFT)
     #h1 = np.append(h1_L*np.exp(-2.0j*np.pi*f*tc1), h1_H*np.exp(-2.0j*np.pi*f*tc2))
-    pl.plot(f,(h1_L))
-    pl.savefig('plot_test_h1_l.pdf')
-    pl.close()
     print(len(np.asarray(h1_L)), len(np.asarray(LFT)), len(psd_L))
     print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(LFT)), np.amax(np.asarray(psd_L)))
     a = overlap(np.asarray(h1_L),np.asarray(h1_L),f)
@@ -192,6 +245,16 @@ def lnp_real(theta):
 	Mc, eta, chieff, chia, lam, tc1 = theta
 	return lnprob(Mc, eta, chieff, chia, lam, tc1)
 
+O = np.zeros(len(Mc))
+R = np.zeros(len(Mc))
 print("Calculating overlap.")
-print(lnlike_real(MC, ETA, CHIEFF, CHIA, LAM, TC1))
+for i in range(len(Mc)):
+	O[i] = lnlike_real(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i]))
+	R[i] = i
+pl.plot(R,O)
+pl.savefig('plot_overlap_005k_02w.pdf')
+pl.close()
+pl.scatter(R,O)
+pl.savefig('scatter_overlap_005k_02w.pdf')
+pl.close()
 #print(lnlike_real(Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg))
