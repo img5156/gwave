@@ -249,7 +249,7 @@ O = np.zeros(len(Mc))
 R = np.zeros(len(Mc))
 print("Calculating overlap.")
 for i in range(len(Mc)):
-	O[i] = lnlike_real(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i]))
+	O[i] = lnlike_real(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i])
 	R[i] = i
 pl.plot(R,O)
 pl.savefig('plot_overlap_005k_02w.pdf')
