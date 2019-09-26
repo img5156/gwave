@@ -53,12 +53,20 @@ print('Finished loading LIGO data.')
 
 # time-domain and frequency-domain grid
 t = np.linspace(0, T, n_sample+1)[:-1]
-f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
-
+f1 = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
+f = np.zeros(len(f1)-1)
+for i in range(len(f)):
+	f[i] = f1[i+1]
 # apply a Tukey window function to eliminate the time-domain boundary ringing
 tukey = sp.signal.tukey(n_sample, alpha=0.1)
-LFT = np.fft.rfft(L1*tukey)/n_sample
+LFT1 = np.fft.rfft(L1*tukey)/n_sample
+LFT = np.zeros(len(LFT1)-1)
+for i in range(len(LFT)):
+	LFT[i] = LFT1[i+1]
 HFT = np.fft.rfft(H1*tukey)/n_sample
+HFT = np.zeros(len(HFT1)-1)
+for i in range(len(HFT)):
+	HFT[i] = HFT1[i+1]
 
 # estimate PSDs for both L1 and H1
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
@@ -228,12 +236,12 @@ print("Done.")
 burnin = 10
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 print("Saving data in file.")
-np.savetxt("test_bin_del_lnlike_005k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_bin_del_lnlike_005k_02w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1")
 
 #print("--- %s seconds ---" % (time.perf_counter() - start_time))
 
 print("Loading the saved data.")
-pars = np.loadtxt('test_bin_del_lnlike_005k_1w.dat')
+pars = np.loadtxt('test_bin_del_lnlike_005k_02w.dat')
 
 Mc = pars[:, 0]
 eta = pars[:, 1]
@@ -249,7 +257,7 @@ for i in range(len(Mc)):
     lnlk_bin[i] = lnlikelihood(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i])
 
 print("Created lnlikelihood array using binning.")
-df = 1./128./4.
+df = 1./T
 #def sh(f):
 #    s = 5.623746655206207e-51 + 6.698419551167371e-50*f**(-0.125) + 7.805894950092525e-31/f**20. + 4.35400984981997e-43/f**6. + 1.630362085130558e-53*f + 2.445543127695837e-56*f**2 + 5.456680257125753e-66*f**5
 #    return s
@@ -306,10 +314,10 @@ print("Done.")
 burnin = 10
 samples2 = sampler2.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("test_real_del_lnlike_005k_1w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("test_real_del_lnlike_005k_02w.dat",samples2,fmt='%f',  header="Mc eta chieff chia lam tc1")
 
 print("Loading the saved data.")
-pars_real = np.loadtxt('test_real_del_lnlike_005k_1w.dat')
+pars_real = np.loadtxt('test_real_del_lnlike_005k_02w.dat')
 
 Mc_real = pars_real[:, 0]
 eta_real = pars_real[:, 1]
