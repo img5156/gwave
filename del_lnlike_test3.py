@@ -41,12 +41,26 @@ print('Finished loading LIGO data.')
 
 # time-domain and frequency-domain grid
 t = np.linspace(0, T, n_sample+1)[:-1]
-f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
+f1 = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
+f = np.zeros(len(f1)-1)
+
+for i in range(len(f)):
+	f[i] = f1[i+1]
 
 # apply a Tukey window function to eliminate the time-domain boundary ringing
 tukey = sp.signal.tukey(n_sample, alpha=0.1)
+
 LFT = np.fft.rfft(L1*tukey)/n_sample
+LFT = np.zeros(len(LFT1)-1)
+
+for i in range(len(LFT)):
+	LFT[i] = LFT1[i+1]
+
 HFT = np.fft.rfft(H1*tukey)/n_sample
+HFT = np.zeros(len(HFT1)-1)
+
+for i in range(len(HFT)):
+	HFT[i] = HFT1[i+1]
 
 # estimate PSDs for both L1 and H1
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
