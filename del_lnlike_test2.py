@@ -148,6 +148,10 @@ h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1)]
 
 print('UPDATED fiducial waveforms.')
 
+def lnlikelihood(Mc, eta, chieff, chia, lam, tc1):
+    par_best = [Mc, eta, chieff, chia, lam, tc1]
+    return(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
+
 def lnprior(Mc, eta, chieff, chia, lam, tc1):
     if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005:
         l = 0.0
