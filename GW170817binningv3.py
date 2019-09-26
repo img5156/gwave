@@ -7,7 +7,8 @@ import scipy as sp
 from waveform import *
 # routines for binning, summary data, etc.
 from binning import *
-
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as pl
 # ---- sample python code for:
 #
 #   processing GW170817 data
@@ -52,6 +53,11 @@ psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='sam
 psd_H = 2.0*np.convolve(np.absolute(HFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd = [psd_L, psd_H]
 
+pl.plot(psd_L,t)
+pl.savefig('figures/plot_psd_t.pdf')
+pl.close()
+
+quit()
 # frequency domain data
 sFT = [LFT, HFT]
 
