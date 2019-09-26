@@ -4,9 +4,10 @@ import numpy as np
 import scipy as sp
 
 # provide sample waveform model
-from waveform2 import *
+from waveform import *
 # routines for binning, summary data, etc.
 from binning import *
+import matplotlib.pyplot as pl
 
 # ---- sample python code for:
 #
@@ -33,16 +34,16 @@ T = 256.0
 n_conv = 100
 
 # load LIGO strain data (time domain)
-#L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
-L1 = np.loadtxt('data/L.txt')
-#H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
-H1 = np.loadtxt('data/H.txt')
+L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
+#L1 = np.loadtxt('data/L.txt')
+H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+#H1 = np.loadtxt('data/H.txt')
 
 
-#i = 1842*4096 - 2**19
-#j = 1842*4096 + 2**19
-#L_r = L1[i:j]
-#H_r = H1[i:j]
+i = 1842*4096 - 2**19
+j = 1842*4096 + 2**19
+L_r = L1[i:j]
+H_r = H1[i:j]
 
 #np.savetxt('data/L.txt',zip(L_r))
 #np.savetxt('data/H.txt',zip(H_r))
@@ -91,16 +92,15 @@ LAM = 0.0                                      # reduced tidal deformation param
 TC1 = -205.5556                                  # merger time (L1)
 TC2 = -205.5521                                  # merger time (H1)
 
-par = [MC, ETA, CHIEFF, CHIA, LAM, TC1, TC2]
 # allowed bounds for parameters
 # change or further refine if desired
 Mc_bounds = [1.1973, 1.1979]
 eta_bounds = [0.2, 0.24999]
 chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.999, 0.999]
-Lam_bounds = [0.0, 1000.0]
+lam_bounds = [0.0, 1000.0]
 dtc_bounds = [-0.005, 0.005]
-par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds] + [dtc_bounds for k in range(ndtct)]
+par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, lam_bounds] + [dtc_bounds for k in range(ndtct)]
 
 # fiducial waveforms sampled at full frequency resolution
 h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
@@ -128,7 +128,7 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 print("Prepared summary data.")
 
 # find (nearly) best-fit parameters by maximizing the likelihood
-par_bf = get_best_fit(sdat, par, par_bounds, h0_0, fbin, fbin_ind, ndtct, atol=1e-10, verbose=True)
+par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, maxiter = 200, atol=1e-10, verbose=True)
 
 # update the best-fit parameters
 MC = par_bf[0]                                       # detector frame chirp mass [Msun]
@@ -164,7 +164,56 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 print('Updated summary data.')
 #print(sdat)
 
-par_best = [1.19758, 0.24048, 0.01432, 0.153987, 446.267, -0.00016554, -0.00015767]
+MC = np.linspace(Mc_bounds[0],Mc_bounds[1], num=100)
+ETA = np.linspace(eta_bounds[0],eta_bounds[1], num=100)
+CHIEFF = np.linspace(chieff_bounds[0],chieff_bounds[1], num=100)
+CHIA = np.linspace(chia_bounds[0],chia_bounds[1], num=100)
+LAM = np.linspace(lam_bounds[0],lam_bounds[1], num=100)
+TC1 = np.linspace(dtc_bounds[0],dtc_bounds[1], num=100)
+
+for i in range(len(Mc)):
+  par_best = [MC[i], 0.24048, 0.01432, 0.153987, 446.267, -0.00016554, -0.00015767]
+  A[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  par_best = [1.197587, ETA[i], 0.01432, 0.153987, 446.267, -0.00016554, -0.00015767]
+  B[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  par_best = [1.197587, 0.24048, CHIEFF[i], 0.153987, 446.267, -0.00016554, -0.00015767]
+  C[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  par_best = [1.197587, 0.24048, 0.01432, CHIA[i], 446.267, -0.00016554, -0.00015767]
+  D[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  par_best = [1.197587, 0.24048, 0.01432, 0.153987, LAM[i], -0.00016554, -0.00015767]
+  E[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  par_best = [1.197587, 0.24048, 0.01432, 0.153987, 446.267, TC1[i], -0.00015767]
+  F[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
+  
+pl.plot(MC,A)
+pl.savefig('figures/plot_lnlike_Mc.pdf')
+pl.close()
+
+
+pl.plot(ETA,B)
+pl.savefig('figures/plot_lnlike_eta.pdf')
+pl.close()
+
+
+pl.plot(CHIEFF,C)
+pl.savefig('figures/plot_lnlike_chieff.pdf')
+pl.close()
+
+
+pl.plot(CHIA,D)
+pl.savefig('figures/plot_lnlike_chia.pdf')
+pl.close()
+
+
+pl.plot(LAM,E)
+pl.savefig('figures/plot_lnlike_lam.pdf')
+pl.close()
+
+
+pl.plot(TC1,F)
+pl.savefig('figures/plot_lnlike_tc1.pdf')
+pl.close()
+
 # example of likelihood evaluation: check the likelihood of the new fiducial waveform
-print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
+#print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
 
