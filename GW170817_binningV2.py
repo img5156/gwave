@@ -58,7 +58,7 @@ f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
 # apply a Tukey window function to eliminate the time-domain boundary ringing
 tukey = sp.signal.tukey(n_sample, alpha=0.1)
 LFT = np.fft.rfft(L1*tukey)/n_sample
-#HFT = np.fft.rfft(H1*tukey)/n_sample
+HFT = np.fft.rfft(H1*tukey)/n_sample
 
 # estimate PSDs for both L1 and H1
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
@@ -171,7 +171,14 @@ CHIA = np.linspace(chia_bounds[0],chia_bounds[1], num=100)
 LAM = np.linspace(lam_bounds[0],lam_bounds[1], num=100)
 TC1 = np.linspace(dtc_bounds[0],dtc_bounds[1], num=100)
 
-for i in range(len(Mc)):
+A = np.zeros(len(MC))
+B = np.zeros(len(MC))
+C = np.zeros(len(MC))
+D = np.zeros(len(MC))
+E = np.zeros(len(MC))
+F = np.zeros(len(MC))
+
+for i in range(len(MC)):
   par_best = [MC[i], 0.24048, 0.01432, 0.153987, 446.267, -0.00016554, -0.00015767]
   A[i] = lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct)
   par_best = [1.197587, ETA[i], 0.01432, 0.153987, 446.267, -0.00016554, -0.00015767]
