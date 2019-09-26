@@ -4,7 +4,7 @@ import numpy as np
 import scipy as sp
 
 # provide sample waveform model
-from waveform import *
+from waveform2 import *
 # routines for binning, summary data, etc.
 from binning import *
 
@@ -91,6 +91,7 @@ LAM = 0.0                                      # reduced tidal deformation param
 TC1 = -205.5556                                  # merger time (L1)
 TC2 = -205.5521                                  # merger time (H1)
 
+par = [MC, ETA, CHIEFF, CHIA, LAM, TC1, TC2]
 # allowed bounds for parameters
 # change or further refine if desired
 Mc_bounds = [1.1973, 1.1979]
@@ -127,7 +128,7 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 print("Prepared summary data.")
 
 # find (nearly) best-fit parameters by maximizing the likelihood
-par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, maxiter = 200, atol=1e-10, verbose=True)
+par_bf = get_best_fit(sdat, par, par_bounds, h0_0, fbin, fbin_ind, ndtct, atol=1e-10, verbose=True)
 
 # update the best-fit parameters
 MC = par_bf[0]                                       # detector frame chirp mass [Msun]
