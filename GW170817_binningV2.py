@@ -34,16 +34,16 @@ T = 256.0
 n_conv = 100
 
 # load LIGO strain data (time domain)
-L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
-#L1 = np.loadtxt('data/L.txt')
-H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
-#H1 = np.loadtxt('data/H.txt')
+#L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
+L1 = np.loadtxt('data/L.txt')
+#H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+H1 = np.loadtxt('data/H.txt')
 
 
-i = 1842*4096 - 2**19
-j = 1842*4096 + 2**19
-L_r = L1[i:j]
-H_r = H1[i:j]
+#i = 1842*4096 - 2**19
+#j = 1842*4096 + 2**19
+#L_r = L1[i:j]
+#H_r = H1[i:j]
 
 #np.savetxt('data/L.txt',zip(L_r))
 #np.savetxt('data/H.txt',zip(H_r))
@@ -58,7 +58,7 @@ f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
 # apply a Tukey window function to eliminate the time-domain boundary ringing
 tukey = sp.signal.tukey(n_sample, alpha=0.1)
 LFT = np.fft.rfft(L1*tukey)/n_sample
-HFT = np.fft.rfft(H1*tukey)/n_sample
+#HFT = np.fft.rfft(H1*tukey)/n_sample
 
 # estimate PSDs for both L1 and H1
 psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
