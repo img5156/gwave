@@ -225,7 +225,7 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     chis = chieff - delta * chia
     s1Z = chis + chia
     s2Z = chis - chia
-    h1_L = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
+    h1_L = hf3hPN(f, M, eta, s1z=s1Z, s2z=s2Z, Lam=lam)
     #h1_H = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=lam)
     # these are NOT shifted to the right merger times
     #h1_1 = np.append(h1_L, h1_H)
@@ -233,11 +233,11 @@ def lnlike_real(Mc, eta, chieff, chia, lam, tc1):
     #sFT = np.append(LFT, HFT)
     #h1 = np.append(h1_L*np.exp(-2.0j*np.pi*f*tc1), h1_H*np.exp(-2.0j*np.pi*f*tc2))
     print(len(np.asarray(h1_L)), len(np.asarray(LFT)), len(psd_L))
-    print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(LFT)), np.amax(np.asarray(psd_L)))
+    print(np.amax(np.asarray(h1_L)), np.amax(np.asarray(h0_L)), np.amax(np.asarray(psd_L)))
     a = overlap(np.asarray(h1_L),np.asarray(h1_L),f)
     b = overlap(np.asarray(h0_L),np.asarray(h0_L),f)
     c = overlap(np.asarray(h0_L),np.asarray(h1_L),f)
-    return c/np.sqrt(a*b)
+    return (c/np.sqrt(a*b))
 
 def lnprob_real(Mc, eta, chieff, chia, lam, tc1):
 	lp = lnprior(Mc, eta, chieff, chia, lam, tc1)
