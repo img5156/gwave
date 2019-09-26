@@ -38,13 +38,13 @@ tc1_true=args.tc1
 tc2_true=args.tc2
 Mtotal = np.array([10, 20])
 
-samples = np.loadtxt('13d_emcee_sampler_10k_1w.dat')
-
+samples = np.loadtxt('13d_emcee_sampler_5k_1w_Mc_eta.dat')
+print("Data loaded.")
 #Corner plot
 fig1 = corner.corner(samples, labels=["M_c", "$\eta$", "$\chi_eff$", "$\chi_a$", "$\lambda$", "$theta$", "$\psi$", "$\phi$", "$D_l$", "$i$", "$\phi_c$", "$tc_1$", "$tc_2$"],
 		truths=[Mc_true, eta_true, chieff_true, chia_true, lam_true, theta_true, psi_true, phi_true, Dl_true, i_true, phi_c_true, tc1_true, tc2_true])
 fig1.suptitle("one-sigma levels")
-fig1.savefig('plot_13d_emcee_sampler_10k_1w.pdf')
+fig1.savefig('plot_13d_emcee_sampler_5k_1w_Mc_eta.pdf')
 
 Mc_mcmc, eta_mcmc, chieff_mcmc, chia_mcmc, lam_mcmc, theta_mcmc, psi_mcmc, phi_mcmc, Dl_mcmc, i_mcmc, phi_c_mcmc, tc1_mcmc, tc2_mcmc= map(lambda v: (v[1], v[0],v[2]),zip(*np.percentile(samples, [16, 50, 84],axis=0)))
 

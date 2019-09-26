@@ -3,7 +3,7 @@
 import numpy as np
 import scipy as sp
 from scipy import interpolate
-from scipy.optimize import minimize, differential_evolution
+from scipy.optimize import minimize
 
 
 # need to provide a waveform-generating function which takes an array of frequencies as input and generate h(f)

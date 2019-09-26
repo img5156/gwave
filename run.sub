@@ -1,0 +1,11 @@
+universe   = vanilla
+getenv     = true
+executable = /ligo/home/dce.psu.edu/img5156/Projects/rel_bin/del_lnlike_condor.py
+output     = /ligo/home/dce.psu.edu/img5156/Projects/rel_bin/log/out.$(Process)
+error      = /ligo/home/dce.psu.edu/img5156/Projects/rel_bin/log/err.$(Process)
+log        = /ligo/home/dce.psu.edu/img5156/Projects/rel_bin/log/log.$(Process)
+initialdir = /ligo/home/dce.psu.edu/img5156/Projects/rel_bin/
+notification = Never
+arguments  =  $(Process)
+on_exit_remove = (ExitBySignal == False) || ((ExitBySignal == True) && (ExitSignal != 11))
+queue 100

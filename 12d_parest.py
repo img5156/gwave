@@ -101,8 +101,8 @@ PHI_C = 0.0
 
 # allowed bounds for parameters
 # change or further refine if desired
-Mc_bounds = [1.1973, 1.1979]
-eta_bounds = [0.2, 0.24999]
+Mc_bounds = [1, 1.5]
+eta_bounds = [0.2, 0.3]
 chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.999, 0.999]
 Lam_bounds = [0.0, 1000.0]
@@ -270,7 +270,7 @@ print("Done.")
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("13d_emcee_sampler_5k_1w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1 tc2")
+np.savetxt("13d_emcee_sampler_5k_1w_Mc_eta.dat",samples,fmt='%f',  header="Mc eta chieff chia lam theta psi phi Dl i phi_c tc1 tc2")
 #quit()
 # Plot for progression of sampler for each parameter
 pl.clf()
@@ -313,7 +313,7 @@ axes[6].set_ylabel(r"$TC_2$")
 
 fig1.tight_layout(h_pad=0.0)
 
-fig1.savefig("13d_line-time-plot_ext_5k_1w.pdf")
+fig1.savefig("13d_line-time-plot_ext_5k_1w_Mc_eta.pdf")
 
 pl.clf()
 fig2, axes = pl.subplots(6, 1, sharex=True, figsize=(8, 9))
@@ -349,5 +349,5 @@ axes[5].set_ylabel(r"$Phi_c$")
 
 
 fig2.tight_layout(h_pad=0.0)
-fig2.savefig("13d_line-time-plot_int_5k_1w.pdf")
+fig2.savefig("13d_line-time-plot_int_5k_1w_Mc_eta.pdf")
 #fig.show()

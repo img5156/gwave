@@ -33,8 +33,8 @@ T = 2048.0
 n_conv = 20
 
 # load LIGO strain data (time domain)
-L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt.gz')
-H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt.gz')
+L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
+H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
 
 print('Finished loading LIGO data.')
 
@@ -152,5 +152,5 @@ print('Updated summary data.')
 #print(sdat)
 
 # example of likelihood evaluation: check the likelihood of the new fiducial waveform
-print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
+print(-lnlike(par_bf, sdat, h0_0, fbin, fbin_ind, ndtct))
 
