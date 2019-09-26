@@ -8,6 +8,7 @@ from waveform import *
 # routines for binning, summary data, etc.
 from binning import *
 import matplotlib.pyplot as pl
+import matplotlib; matplotlib.use('Agg')
 
 # ---- sample python code for:
 #
