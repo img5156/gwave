@@ -257,9 +257,9 @@ for i in range(len(Mc)):
 	O[i] = lnlike_real(Mc[i], eta[i], chieff[i], chia[i], lam[i], tc1[i])
 	R[i] = i
 pl.plot(R,O)
-pl.savefig('plot_overlap_005k_02w.pdf')
+pl.savefig('figures/plot_overlap_005k_02w.pdf')
 pl.close()
 pl.scatter(R,O)
-pl.savefig('scatter_overlap_005k_02w.pdf')
+pl.savefig('figures/scatter_overlap_005k_02w.pdf')
 pl.close()
 #print(lnlike_real(Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg))
