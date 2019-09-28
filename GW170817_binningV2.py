@@ -67,6 +67,7 @@ psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='sam
 psd_H = 2.0*np.convolve(np.absolute(HFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
 psd = [psd_L, psd_H]
 
+'''
 np.savetxt('data/psd_L_small.txt',zip(psd_L))
 np.savetxt('data/psd_H_small.txt',zip(psd_H))
 
@@ -75,6 +76,8 @@ pl.savefig('figures/plot_psd_t_small.pdf')
 pl.close()
 
 quit()
+'''
+
 # frequency domain data
 sFT = [LFT, HFT]
 
@@ -99,8 +102,10 @@ CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
-TC1 = -205.5556                                  # merger time (L1)
-TC2 = -205.5521                                  # merger time (H1)
+TC1 = -127.5556                                  # merger time (L1)
+TC2 = -127.5521
+#TC1 = -205.5556
+#TC2 = -205.5521                                 # merger time (H1)
 
 # allowed bounds for parameters
 # change or further refine if desired
@@ -109,7 +114,7 @@ eta_bounds = [0.2, 0.24999]
 chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.999, 0.999]
 lam_bounds = [0.0, 1000.0]
-dtc_bounds = [-0.005, 0.005]
+dtc_bounds = [-0.05, 0.05]
 par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, lam_bounds] + [dtc_bounds for k in range(ndtct)]
 
 # fiducial waveforms sampled at full frequency resolution
@@ -117,7 +122,7 @@ h0_L = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 # these are NOT shifted to the right merger times
 h0_0 = [h0_L, h0_H]
-# these are shifted to the right merger times
+# these are shited to the right merger times
 h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Constructed fiducial waveforms.')
@@ -138,7 +143,7 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 print("Prepared summary data.")
 
 # find (nearly) best-fit parameters by maximizing the likelihood
-par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, maxiter = 200, atol=1e-10, verbose=True)
+par_bf = get_best_fit(sdat, par_bounds, h0_0, fbin, fbin_ind, ndtct, maxiter = 500, atol=1e-12, verbose=True)
 
 # update the best-fit parameters
 MC = par_bf[0]                                       # detector frame chirp mass [Msun]
@@ -173,7 +178,7 @@ sdat = compute_sdat(f, fbin, fbin_ind, ndtct, psd, sFT, h0)
 
 print('Updated summary data.')
 #print(sdat)
-
+'''
 MC = np.linspace(Mc_bounds[0],Mc_bounds[1], num=100)
 ETA = np.linspace(eta_bounds[0],eta_bounds[1], num=100)
 CHIEFF = np.linspace(chieff_bounds[0],chieff_bounds[1], num=100)
@@ -230,7 +235,8 @@ pl.close()
 pl.plot(TC1,F)
 pl.savefig('figures/plot_lnlike_tc1.pdf')
 pl.close()
+'''
 
 # example of likelihood evaluation: check the likelihood of the new fiducial waveform
-#print(-lnlike(par_best, sdat, h0_0, fbin, fbin_ind, ndtct))
+print(-lnlike(par_bf, sdat, h0, fbin, fbin_ind, ndtct))
 
