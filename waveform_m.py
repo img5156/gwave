@@ -35,7 +35,7 @@ def f_isco(M):
     return 1./6.**(3./2.)/np.pi/M
 
 # combine the modulus and the phase of h(f)
-def hf3hPN(f, lnA, phic, Mc, eta, e2, tc, mu2=1.0, mu3=1.0, mu4=1.0, e3=1.0, e4=1.0):
+def hf3hPN(f, lnA, phic, Mc, eta, e2, tc, mu2=1.0, mu3=1.0, mu4=1.0, mu5 = 1.0, e3=1.0, e4=1.0):
 
     M = Mc*MTSUN_SI/eta**(3./5.)
     v  = (PI*M*f)**(1./3.)
@@ -111,7 +111,7 @@ def lnlike(par, sdat, h0, fbin, fbin_ind, ndtct):
     par_notc = [lnA, phic, Mc, eta, e2]
 
     # relative waveform
-    rf = [compute_rf(par_notc + [dtc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
+    rf = [compute_rf(par_notc + [tc[k]], h0[k], fbin, fbin_ind) for k in range(ndtct)]
 
     # Total log-likelihood is the sum of all detectors
     for k in range(ndtct):
@@ -145,11 +145,11 @@ def get_best_fit(sdat, par_bounds, h0, fbin, fbin_ind, ndtct, maxiter=100, atol=
     # output best-fit parameters if requested
     if verbose is True:
         print('log-likelihood = ', lnl)
-        print('lnA_bf =', Mc_bf)
-        print('phic_bf =', eta_bf)
-        print('Mc_bf =', chieff_bf)
-        print('eta_bf =', chia_bf)
-        print('e2_bf =', Lam_bf)
+        print('lnA_bf =', lnA_bf)
+        print('phic_bf =', phic_bf)
+        print('Mc_bf =', Mc_bf)
+        print('eta_bf =', eta_bf)
+        print('e2_bf =', e2_bf)
         print('tc_bf =', tc_bf)
 
     return res
