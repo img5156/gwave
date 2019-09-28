@@ -89,8 +89,8 @@ CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
-TC1 = -205.5556                                  # merger time (L1)
-TC2 = -205.5521                                  # merger time (H1)
+TC1 = -127.5556                                  # merger time (L1)
+TC2 = -127.5521                               # merger time (H1)
 
 # allowed bounds for parameters
 # change or further refine if desired
@@ -280,7 +280,7 @@ axes[5].set_ylabel(r"$TC_1$")
 #axes[6].set_ylabel(r"$TC_2$")
 
 fig.tight_layout(h_pad=0.0)
-fig.savefig("figures/line-time-plot_changed_bounds_10k_2w.pdf")
+fig.savefig("figures/SMALL-line-time-plot_changed_bounds_10k_2w.pdf")
 #fig.show()
 
 # Removing first 100 points as chain takes some time to stabilize
@@ -329,7 +329,7 @@ Mtotal = np.array([10, 20])
 fig1 = corner.corner(samples, labels=["M_c", "$\eta$", "$\chi_eff$", "$\chi_a$", "$\lambda$", "$tc_1$", "$tc_2$"],
 		truths=[Mc_true, eta_true, chieff_true, chia_true, lam_true, tc1_true, tc2_true])
 fig1.suptitle("one-sigma levels")
-fig1.savefig('figures/plot_emcee_sampler_bounds_changed_10k_2w.pdf')
+fig1.savefig('figures/SMALL-plot_emcee_sampler_bounds_changed_10k_2w.pdf')
 
 Mc_mcmc, eta_mcmc, chieff_mcmc, chia_mcmc, lam_mcmc, tc1_mcmc, tc2_mcmc= map(lambda v: (v[1], v[0],v[2]),zip(*np.percentile(samples, [16, 50, 84],axis=0)))
 
