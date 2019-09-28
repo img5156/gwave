@@ -94,10 +94,10 @@ TC2 = -205.5521                                  # merger time (H1)
 
 # allowed bounds for parameters
 # change or further refine if desired
-Mc_bounds = [1.1973, 1.1979]
-eta_bounds = [0.2, 0.24999]
+Mc_bounds = [1.1970, 1.1980]
+eta_bounds = [0.2, 0.4]
 chieff_bounds = [-0.2, 0.2]
-chia_bounds = [-0.999, 0.999]
+chia_bounds = [-0.6, 0.6]
 Lam_bounds = [0.0, 1000.0]
 dtc_bounds = [-0.005, 0.005]
 par_bounds = [Mc_bounds, eta_bounds, chieff_bounds, chia_bounds, Lam_bounds] + [dtc_bounds for k in range(ndtct)]
@@ -183,7 +183,7 @@ def lnlikelihood(Mc, eta, chieff, chia, lam, tc1, tc2):
 
 # Uniform prior on all parameter in their respective range
 def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
-    if 1.1973<Mc<1.1979 and 0.2<eta<0.24999 and -0.2<chieff<0.2 and -0.999<chia<0.999 and 0<lam<1000 and -0.005<tc1<0.005 and -0.005<tc2<0.005:
+    if Mc_bounds[0]<Mc<Mc_bounds[1] and eta_bounds[0]<eta<eta_bounds[1] and chieff-bounds[0]<chieff<chieff_bounds[1] and chia_bounds[0]<chia<chia_bounds[1] and Lam_bounds[0]<lam<Lam_bounds[1] and dtc_bounds[0]<tc1<dtc_bounds[1] and dtc_bounds[0]<tc2<dtc_bounds[1]:
         l = 0.0
     else:
         l =-np.inf
@@ -218,8 +218,8 @@ def lnp(theta):
 
 
 #result = opt.minimize(func, [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg])
-#result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
-result = [Mc_bounds[0], eta_bounds[0], chieff_bounds[0], chia_bounds[0], Lam_bounds[0], dtc_bounds[0], dtc_bounds[0]]
+result = [Mc_avg, eta_avg, chieff_avg, chia_avg, Lam_avg, tc1_avg, tc2_avg]
+#result = [Mc_bounds[0], eta_bounds[0], chieff_bounds[0], chia_bounds[0], Lam_bounds[0], dtc_bounds[0], dtc_bounds[0]]
 #Mc_ml, eta_ml, chieff_ml, chia_ml, lam_ml, tc1_ml, tc2_ml = result['x']
 
 
@@ -227,14 +227,14 @@ result = [Mc_bounds[0], eta_bounds[0], chieff_bounds[0], chia_bounds[0], Lam_bou
 #print("Started time.")
 # Set up the sampler.
 print("Setting up sampler.")
-ndim, nwalkers = 7, 100
-pos = [result + 1e-4*np.random.randn(ndim) for i in range(nwalkers)]
+ndim, nwalkers = 7, 200
+pos = [result + 1e-5*np.random.randn(ndim) for i in range(nwalkers)]
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnp)
 #print pos
 
 # Clear and run the production chain.
 print("Running MCMC...")
-sampler.run_mcmc(pos, 5000)
+sampler.run_mcmc(pos, 10000)
 #print (pos)
 print("Done.")
 
@@ -280,13 +280,13 @@ axes[5].set_ylabel(r"$TC_1$")
 #axes[6].set_ylabel(r"$TC_2$")
 
 fig.tight_layout(h_pad=0.0)
-fig.savefig("line-time-plot_of_the_prams_rb3_5k_1w_noopt_bound0.png")
+fig.savefig("figures/line-time-plot_changed_bounds_10k_2w.pdf")
 #fig.show()
 
 # Removing first 100 points as chain takes some time to stabilize
 burnin = 1000
 samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 # saving data in file
-np.savetxt("emcee_sampler_rb3_5k_1w_noopt_bound0.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
+np.savetxt("emcee_sampler-changed-bounds_10k_2w.dat",samples,fmt='%f',  header="Mc eta chieff chia lam tc1 tc2")
 
 #print("--- %s seconds ---" % (time.perf_counter() - start_time))
