@@ -83,7 +83,7 @@ DELTA = np.sqrt(1.0 - 4.0*ETA)                   # asymmetric mass ratio (m1 - m
 M = MC/ETA**0.6                                  # total mass [Msun]
 M1 = 0.5*M*(1.0 + DELTA)                        # primary mass [Msun]
 M2 = 0.5*M*(1.0 - DELTA)                        # second mass [Msun]
-S1Z = 0.0                                        # aligned spin component for the primary
+S1Z = 0.0                                        # aligned spin component for the primaryi
 S2Z = 0.0                                        # aligned spin component for the secondary
 CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
@@ -95,7 +95,7 @@ TC2 = -205.5521                                  # merger time (H1)
 # allowed bounds for parameters
 # change or further refine if desired
 Mc_bounds = [1.1970, 1.1980]
-eta_bounds = [0.2, 0.4]
+eta_bounds = [0.1, 0.2499]
 chieff_bounds = [-0.2, 0.2]
 chia_bounds = [-0.6, 0.6]
 Lam_bounds = [0.0, 1000.0]
@@ -183,7 +183,7 @@ def lnlikelihood(Mc, eta, chieff, chia, lam, tc1, tc2):
 
 # Uniform prior on all parameter in their respective range
 def lnprior(Mc, eta, chieff, chia, lam, tc1, tc2):
-    if Mc_bounds[0]<Mc<Mc_bounds[1] and eta_bounds[0]<eta<eta_bounds[1] and chieff-bounds[0]<chieff<chieff_bounds[1] and chia_bounds[0]<chia<chia_bounds[1] and Lam_bounds[0]<lam<Lam_bounds[1] and dtc_bounds[0]<tc1<dtc_bounds[1] and dtc_bounds[0]<tc2<dtc_bounds[1]:
+    if Mc_bounds[0]<Mc<Mc_bounds[1] and eta_bounds[0]<eta<eta_bounds[1] and chieff_bounds[0]<chieff<chieff_bounds[1] and chia_bounds[0]<chia<chia_bounds[1] and Lam_bounds[0]<lam<Lam_bounds[1] and dtc_bounds[0]<tc1<dtc_bounds[1] and dtc_bounds[0]<tc2<dtc_bounds[1]:
         l = 0.0
     else:
         l =-np.inf
