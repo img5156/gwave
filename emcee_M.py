@@ -283,13 +283,13 @@ lnA_true=args.lnA
 phic_true=args.phic
 Mc_true=args.Mc
 eta_true=args.eta
-e2_true=e2.Mc
+e2_true=args.e2
 tc1_true=args.tc1
 tc2_true=args.tc2
 Mtotal = np.array([10, 20])
 
 #Corner plot
-fig1 = corner.corner(samples, labels=["lnA", "\phi_c", "M_c", "$\eta$", "e_2", "$tc_1$", "$tc_2$"],
+fig1 = corner.corner(samples, labels=["lnA", "\phi_c", "M_c", "$\eta$", "$e_2$", "$tc_1$", "$tc_2$"],
 		truths=[lnA_true, phic_true, Mc_true, eta_true, e2_true, tc1_true, tc2_true])
 fig1.suptitle("one-sigma levels")
 fig1.savefig('figures/M_plot_emcee_sampler_10k_2w.pdf')
