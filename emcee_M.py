@@ -272,7 +272,6 @@ parser.add_argument("--phic", help = "injected phic value", type=float)
 parser.add_argument("--Mc", help = "injected Mc value", type=float)
 parser.add_argument("--eta", help = "injected eta value", type=float)
 parser.add_argument("--e2", help = "injected e2 value", type=float)
-parser.add_argument("--Mc", help = "injected Mc value", type=float)
 parser.add_argument("--tc1", help = "injected tc1 value", type=float)
 parser.add_argument("--tc2", help = "injected tc2 value", type=float)
 
@@ -295,7 +294,7 @@ fig1 = corner.corner(samples, labels=["lnA", "\phi_c", "M_c", "$\eta$", "e_2", "
 fig1.suptitle("one-sigma levels")
 fig1.savefig('figures/M_plot_emcee_sampler_10k_2w.pdf')
 
-Mc_mcmc, eta_mcmc, chieff_mcmc, chia_mcmc, lam_mcmc, tc1_mcmc, tc2_mcmc= map(lambda v: (v[1], v[0],v[2]),zip(*np.percentile(samples, [16, 50, 84],axis=0)))
+lnA_mcmc, phic_mcmc, Mc_mcmc, eta_mcmc, e2_mcmc, tc1_mcmc, tc2_mcmc= map(lambda v: (v[1], v[0],v[2]),zip(*np.percentile(samples, [16, 50, 84],axis=0)))
 
 print("True values of the parameters:")
 print("lnA= ", lnA_true)
