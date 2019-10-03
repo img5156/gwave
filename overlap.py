@@ -33,8 +33,10 @@ T = 2048.0
 n_conv = 20
 
 # load LIGO strain data (time domain)
-L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
-H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+#L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
+#H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+L1 = np.loadtxt('data/L.txt')
+H1 = np.loadtxt('data/H.txt')
 
 print('Finished loading LIGO data.')
 
@@ -145,9 +147,10 @@ h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Updated fiducial waveforms.')
 
-#par = [Mc,eta, chieff, chia, lam, tc1, tc2]
-rL = compute_rf(par_bf, h0[0], fbin, fbin_ind)
-rH = compute_rf(par_bf, h0[1], fbin, fbin_ind)
+parL = [par_bf[0:6]]
+parH = [par_bf[0:5],par_bf[6]]
+rL = compute_rf(parL, h0[0], fbin, fbin_ind)
+rH = compute_rf(parH, h0[1], fbin, fbin_ind)
 
 h_int = np.zeros(len(f))
 
@@ -161,10 +164,4 @@ for i in range(len(fbin)):
 print(len(h_int))
 print(len(h0))
 print(len(f))
-      
- 
-
-
-
-
-
+  
