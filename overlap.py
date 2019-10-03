@@ -146,14 +146,17 @@ h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 print('Updated fiducial waveforms.')
 
 #par = [Mc,eta, chieff, chia, lam, tc1, tc2]
-r = compute_rf(par_bf, h0, fbin, fbin_ind)
+rL = compute_rf(par_bf, h0[0], fbin, fbin_ind)
+rH = compute_rf(par_bf, h0[1], fbin, fbin_ind)
 
 h_int = np.zeros(len(f))
 
 for i in range(len(fbin)):
   for j in range(len(f)):
     while f(j)<=fbin(i):
-      h_int[j] = (r[0][i] + (1.0/T)*r[1][i])*h0[j]
+      h_int[0][j] = (rL[0][i] + (1.0/T)*rL[1][i])*h0[0][j]
+      h_int[1][j] = (rH[0][i] + (1.0/T)*rH[1][i])*h0[1][j]
+      
       
 print(len(h_int))
 print(len(h0))
