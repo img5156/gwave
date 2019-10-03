@@ -33,10 +33,9 @@ T = 2048.0
 n_conv = 20
 
 # load LIGO strain data (time domain)
-#L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
-#H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
-L1 = np.loadtxt('data/L.txt')
-H1 = np.loadtxt('data/H.txt')
+L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
+H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+
 
 print('Finished loading LIGO data.')
 
