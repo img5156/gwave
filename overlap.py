@@ -156,9 +156,11 @@ h_int = np.array([np.zeros(len(f)), np.zeros(len(f))], dtype=np.complex128)
 
 for i in range(len(fbin)):
   for j in range(len(f)):
-    while f[j]<=fbin[i]:
+    if f[j]<=fbin[i]:
       h_int[0][j] = (rL[0][i] + (1.0/T)*rL[1][i])*h0[0][j]
       h_int[1][j] = (rH[0][i] + (1.0/T)*rH[1][i])*h0[1][j]
+    else:
+      break
       
       
 print(len(h_int))
