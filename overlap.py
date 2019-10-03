@@ -155,7 +155,7 @@ h_int = np.zeros(len(f))
 
 for i in range(len(fbin)):
   for j in range(len(f)):
-    while f(j)<=fbin(i):
+    while f[j]<=fbin[i]:
       h_int[0][j] = (rL[0][i] + (1.0/T)*rL[1][i])*h0[0][j]
       h_int[1][j] = (rH[0][i] + (1.0/T)*rH[1][i])*h0[1][j]
       
