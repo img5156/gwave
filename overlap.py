@@ -161,6 +161,7 @@ for i in range(len(fbin)):
       h_int[1][j] = (rH[0][i] + (1.0/T)*rH[1][i])*h0[1][j]
     else:
       break
+  print(i)
       
       
 print(len(h_int))
