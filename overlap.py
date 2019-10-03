@@ -105,7 +105,7 @@ f_lo = 23.0
 f_hi = 1000.0
 
 Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0.5)
-#print(Nbin, fbin, fbin_ind)
+print(Nbin, fbin, fbin_ind)
 
 print("Frequency binning done: # of bins = %d"%(Nbin))
 
