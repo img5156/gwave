@@ -146,8 +146,8 @@ h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
 
 print('Updated fiducial waveforms.')
 
-parL = [par_bf[0:6]]
-parH = [par_bf[0:5],par_bf[6]]
+parL = [MC, ETA, CHIEFF, CHIA, LAM, TC1]
+parH = [MC, ETA, CHIEFF, CHIA, LAM, TC2]
 rL = compute_rf(parL, h0[0], fbin, fbin_ind)
 rH = compute_rf(parH, h0[1], fbin, fbin_ind)
 
