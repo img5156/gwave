@@ -151,7 +151,7 @@ parH = [MC, ETA, CHIEFF, CHIA, LAM, TC2]
 rL = compute_rf(parL, h0[0], fbin, fbin_ind)
 rH = compute_rf(parH, h0[1], fbin, fbin_ind)
 
-h_int = np.zeros(len(f))
+h_int = [np.zeros(len(f)), np.zeros(len(f))]
 
 for i in range(len(fbin)):
   for j in range(len(f)):
