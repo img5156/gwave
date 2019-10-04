@@ -161,7 +161,7 @@ for i in range(len(fbin)-1):
       h_int[1][j] = (rH[0][i] + (f[j]-0.5*(f[fbin_ind[i]]+f[fbin_ind[i+1]]))*rH[1][i])*h0[1][j]
     else:
       break
-  #print(i)
+  print(i)
   
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
