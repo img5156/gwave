@@ -28,7 +28,7 @@ ndtct = 2
 # and put the data file in the data directory
 
 # We use 2048 seconds of strain data at sampling rate of 4096 Hz (noise subtracted)
-n_sample = 2**23
+n_sample = 2**20
 T = 256.0
 n_conv = 20
 
