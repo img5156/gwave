@@ -164,7 +164,7 @@ for i in range(len(fbin)-1):
   print(i)
       
       
-print(len(h_int))
-print(len(h0))
+print(np.shape(h_int))
+print(np.shape(h0))
 print(len(f))
  
