@@ -161,10 +161,19 @@ for i in range(len(fbin)-1):
       h_int[1][j] = (rH[0][i] + 0.5*(f[fbin_ind[i]]+f[fbin_ind[i+1]])*rH[1][i])*h0[1][j]
     else:
       break
-  print(i)
-      
+  #print(i)
+  
+def overlap(A, B, f):
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
+    return summ
+ 
+a = np.absolute(overlap(h0[0],h0[0],f))
+b = np.absolute(overlap(h_int[0],h_int[0],f))
+c = np.absolute(overlap(h0[0],h_int[0],f))
 
-print(np.shape(h_int))
-print(np.shape(h0))
-print(len(f))
+d = c/(np.sqrt(a)*np.sqrt(b))
+print("Overlap=",d)
+#print(np.shape(h_int))
+#print(np.shape(h0))
+#print(len(f))
  
