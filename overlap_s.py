@@ -29,12 +29,12 @@ ndtct = 2
 
 # We use 2048 seconds of strain data at sampling rate of 4096 Hz (noise subtracted)
 n_sample = 2**23
-T = 2048.0
+T = 256.0
 n_conv = 20
 
 # load LIGO strain data (time domain)
-L1 = np.loadtxt('data/L-L1_LOSC_CLN_4_V1-1187007040-2048.txt')
-H1 = np.loadtxt('data/H-H1_LOSC_CLN_4_V1-1187007040-2048.txt')
+L1 = np.loadtxt('data/L.txt')
+H1 = np.loadtxt('data/H.txt')
 
 
 print('Finished loading LIGO data.')
@@ -77,8 +77,8 @@ CHIA = 0.5*(S1Z - S2Z)
 CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
-TC1 = -205.5556                                  # merger time (L1)
-TC2 = -205.5521                                  # merger time (H1)
+TC1 = -127.5556                                  # merger time (L1)
+TC2 = -127.5521  
 
 # allowed bounds for parameters
 # change or further refine if desired
