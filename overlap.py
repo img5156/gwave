@@ -152,13 +152,13 @@ rL = compute_rf(parL, h0[0], fbin, fbin_ind)
 rH = compute_rf(parH, h0[1], fbin, fbin_ind)
 
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
-h_int = np.array([np.zeros(len(f)), np.zeros(len(f))], dtype=np.complex128)
+h_int = np.array([np.ones(len(f)), np.ones(len(f))], dtype=np.complex128)
 
-for i in range(len(fbin)):
-  for j in range(len(f)):
+for i in range(len(fbin)-1):
+  for j in range(fbin_ind[0],len(f)):
     if f[j]<=fbin[i]:
-      h_int[0][j] = (rL[0][i] + (1.0/T)*rL[1][i])*h0[0][j]
-      h_int[1][j] = (rH[0][i] + (1.0/T)*rH[1][i])*h0[1][j]
+      h_int[0][j] = (rL[0][i] + 0.5*(f[f_ind[i]]+f[f_ind[i+1]])*rL[1][i])*h0[0][j]
+      h_int[1][j] = (rH[0][i] + 0.5*(f[f_ind[i]]+f[f_ind[i+1]])*rH[1][i])*h0[1][j]
     else:
       break
   print(i)
@@ -167,4 +167,4 @@ for i in range(len(fbin)):
 print(len(h_int))
 print(len(h0))
 print(len(f))
-  
+ 
