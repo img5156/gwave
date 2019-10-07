@@ -143,9 +143,12 @@ h0_H = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h0_0 = [h0_L, h0_H]
 # these are shifted to the right merger times
 h0 = [h0_L*np.exp(-2.0j*np.pi*f*TC1), h0_H*np.exp(-2.0j*np.pi*f*TC2)]
-
+h0[0][0] = 0
 print('Updated fiducial waveforms.')
 
+#print("h=",h0[0][0:100])
+#print("psd_L",psd_L[0:100])
+#exit()
 parL = [MC, ETA, CHIEFF, CHIA, LAM, TC1]
 parH = [MC, ETA, CHIEFF, CHIA, LAM, TC2]
 rL = compute_rf(parL, h0[0], fbin, fbin_ind)
@@ -166,13 +169,21 @@ for i in range(len(fbin)-1):
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
     return summ
- 
+h0[0][:fbin_ind[0]] = 0 
+h0[0][fbin_ind[-1]:] = 0
 a = np.absolute(overlap(h0[0],h0[0],f))
 b = np.absolute(overlap(h_int[0],h_int[0],f))
 c = np.absolute(overlap(h0[0],h_int[0],f))
 
 d = c/(np.sqrt(a)*np.sqrt(b))
-print("Overlap=",d)
+
+print("h=",h0[0][42000:43000])
+print("h_int=",h_int[0][42000:43000])
+print("psd_L",psd_L[0:100])
+print("Overlap1=",a)
+print("Overlap2=",b)
+print("Overlap3=",c)
+print("Overlap4=",d)
 #print(np.shape(h_int))
 #print(np.shape(h0))
 #print(len(f))
