@@ -84,7 +84,7 @@ ad = mt.floor(T/(2*tau))
 
 for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
-  for fn in range(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
+  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
     #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
     fh = fbin_ind[i]*(1-ad)+j*ad
     h = 0.5*(h1[fh]+h1[fh+ad])
