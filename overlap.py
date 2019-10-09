@@ -95,7 +95,7 @@ for i in range(len(fbin)-1):
       
   print(i)
 
-fp = np.asarray(fp[:k])  
+fp = np.ndarray.tolist(fp[:k])  
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
     return summ
