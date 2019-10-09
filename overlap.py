@@ -78,17 +78,18 @@ rL = compute_rf(parL, h1, fbin, fbin_ind)
 
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
-
 j = fbin_ind[0]
 #ad = mt.floor(T/(2*tau))
 ad = 1
+fp = []
 for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
     #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
+    fp[k] = fn
     fh = fbin_ind[i]*(1-ad)+j*ad
     h = 0.5*(h1[fh]+h1[fh+ad])
-    h_int[j] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
+    h_int[j-fbin_ind[0]] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
       
   print(i)
@@ -97,16 +98,20 @@ def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
     return summ
   
+h20 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
+h2 = h20*np.exp(-2.0j*np.pi*f*TC1)
+  
 h0[:fbin_ind[0]] = 0 
 h0[fbin_ind[-1]:] = 0
+
 a = np.absolute(overlap(h0,h0,f))
 b = np.absolute(overlap(h_int,h_int,f))
 c = np.absolute(overlap(h0,h_int,f))
 
 d = c/(np.sqrt(a)*np.sqrt(b))
 
-print("h=",h1[42000:43000])
-print("h_int=",h_int[42000:43000])
+print("h=",h2[1:1000])
+print("h_int=",h_int[1:1000])
 print("psd_L",psd_L[0:100])
 print("Overlap1=",a)
 print("Overlap2=",b)
