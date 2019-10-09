@@ -86,10 +86,11 @@ for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
     #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
-    fp[k] = fn
     fh = fbin_ind[i]*(1-ad)+j*ad
+    k = j-fbin_ind[0]
+    fp[k] = fn
     h = 0.5*(h1[fh]+h1[fh+ad])
-    h_int[j-fbin_ind[0]] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
+    h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
       
   print(i)
