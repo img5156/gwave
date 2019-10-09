@@ -79,7 +79,7 @@ rL = compute_rf(parL, h1, fbin, fbin_ind)
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
 j = fbin_ind[0]
-ad = mt.floor(T/(2*tau))
+ad = round(mt.floor(T/(2*tau)))
 #ad = 1
 fp = [np.zeros(len(f))]
 for i in range(len(fbin)-1):
