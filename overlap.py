@@ -16,8 +16,8 @@ T = 256.0
 n_conv = 20
 
 # load LIGO strain data (time domain)
-L1 = np.loadtxt('data/L.txt')
-H1 = np.loadtxt('data/H.txt')
+#L1 = np.loadtxt('data/L.txt')
+#H1 = np.loadtxt('data/H.txt')
 
 
 print('Finished loading LIGO data.')
@@ -27,15 +27,19 @@ t = np.linspace(0, T, n_sample+1)[:-1]
 f = np.linspace(0, 1.0/T*n_sample/2.0, n_sample//2+1)
 
 # apply a Tukey window function to eliminate the time-domain boundary ringing
-tukey = sp.signal.tukey(n_sample, alpha=0.1)
+#tukey = sp.signal.tukey(n_sample, alpha=0.1)
 #pl.plot(t,tukey)
-L1T = L1*tukey
+#L1T = L1*tukey
 #pl.plot(t,L1T)
 #pl.plot(t,L1)
-LFT = np.fft.rfft(L1T)/n_sample
+#LFT = np.fft.rfft(L1T)/n_sample
 
 # estimate PSDs for both L1 and H1
-psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
+#psd_L = 2.0*np.convolve(np.absolute(LFT)**2, np.ones((n_conv))/n_conv, mode='same')*T
+
+def sh(f):
+    s = 5.623746655206207e-51 + 6.698419551167371e-50*f**(-0.125) + 7.805894950092525e-31/f**20. + 4.35400984981997e-43/f**6. + 1.630362085130558e-53*f + 2.445543127695837e-56*f**2 + 5.456680257125753e-66*f**5
+    return s
 
 print('Finished estimating the PSD.')
 
@@ -96,27 +100,25 @@ for i in range(len(fbin)-1):
   print(i)
 
 fp = np.asarray(fp[:k])  
+psd = sh(fp)
 h_int = np.asarray(h_int[:k])
 
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*(1.0/T)
     return summ
   
 h20 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h2 = h20*np.exp(-2.0j*np.pi*fp*TC1)
-  
-h0[:fbin_ind[0]] = 0 
-h0[fbin_ind[-1]:] = 0
 
-a = np.absolute(overlap(h0,h0,f))
-b = np.absolute(overlap(h_int,h_int,f))
-c = np.absolute(overlap(h0,h_int,f))
+a = np.absolute(overlap(h2,h2,fp))
+b = np.absolute(overlap(h_int,h_int,fp))
+c = np.absolute(overlap(h2,h_int,fp))
 
 d = c/(np.sqrt(a)*np.sqrt(b))
 
 print("h=",h2[1:1000])
 print("h_int=",h_int[1:1000])
-print("psd_L",psd_L[0:100])
+print("psd_L",psd[0:100])
 print("Overlap1=",a)
 print("Overlap2=",b)
 print("Overlap3=",c)
