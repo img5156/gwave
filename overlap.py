@@ -80,8 +80,8 @@ rL = compute_rf(parL, h1, fbin, fbin_ind)
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
 
 j = fbin_ind[0]
-ad = mt.floor(T/(2*tau))
-
+#ad = mt.floor(T/(2*tau))
+ad = 1
 for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
