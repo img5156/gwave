@@ -58,7 +58,6 @@ TC2 = -127.5521
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h1 = h0*np.exp(-2.0j*np.pi*f*TC1)
-tau = (5.0/(256*np.pi*f_lo))*((np.pi*MC*f_lo)**(-5/3))
 h1[0] = 0
 print('Constructed fiducial waveforms.')
 
@@ -66,6 +65,7 @@ print('Constructed fiducial waveforms.')
 # range of frequency to be used in the computation of likelihood [f_lo, f_hi] [Hz]
 f_lo = 23.0
 f_hi = 1000.0
+tau = (5.0/(256*np.pi*f_lo))*((np.pi*MC*f_lo)**(-5/3))
 
 Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0.5)
 print(Nbin, fbin, fbin_ind)
