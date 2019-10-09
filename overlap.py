@@ -79,22 +79,23 @@ rL = compute_rf(parL, h1, fbin, fbin_ind)
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
 j = fbin_ind[0]
-#ad = mt.floor(T/(2*tau))
-ad = 1
-fp = []
+ad = mt.floor(T/(2*tau))
+#ad = 1
+fp = [np.zeros(len(f))]
 for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
-    #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
-    fh = fbin_ind[i]*(1-ad)+j*ad
     k = j-fbin_ind[0]
     fp[k] = fn
+    #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
+    fh = fbin_ind[i]*(1-ad)+j*ad
     h = 0.5*(h1[fh]+h1[fh+ad])
     h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
       
   print(i)
-  
+
+fp = fp[:k]  
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
     return summ
