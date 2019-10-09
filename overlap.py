@@ -86,7 +86,7 @@ for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
     k = j-fbin_ind[0]
-    fp[k] = fn
+    #fp[k] = fn
     #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
     fh = fbin_ind[i]*(1-ad)+j*ad
     h = 0.5*(h1[fh]+h1[fh+ad])
