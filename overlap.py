@@ -81,12 +81,12 @@ h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
 j = fbin_ind[0]
 #ad = round(mt.floor(T/(2*tau)))
 ad = 1
-fp = [np.zeros(len(f))]
+fp = np.array(np.zeros(len(f)))
 for i in range(len(fbin)-1):
   fmid = 0.5*(f[fbin_ind[i]] + f[fbin_ind[i+1]])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
     k = j-fbin_ind[0]
-    #fp[k] = fn
+    fp[k] = fn
     #fh = fbin_ind[i]+(j-fbin_ind[i]+1)*ad
     fh = fbin_ind[i]*(1-ad)+j*ad
     h = 0.5*(h1[fh]+h1[fh+ad])
@@ -95,13 +95,15 @@ for i in range(len(fbin)-1):
       
   print(i)
 
-fp = np.ndarray.tolist(fp[:k])  
+fp = np.asarray(fp[:k])  
+h_int = np.asarray(h_int[:k])
+
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd_L).sum()))*(1.0/T)
     return summ
   
 h20 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-h2 = h20*np.exp(-2.0j*np.pi*f*TC1)
+h2 = h20*np.exp(-2.0j*np.pi*fp*TC1)
   
 h0[:fbin_ind[0]] = 0 
 h0[fbin_ind[-1]:] = 0
