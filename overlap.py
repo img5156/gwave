@@ -9,11 +9,11 @@ from waveform import *
 from binning import *
 
 # number of detectors (Livingston and Hanford)
-ndtct = 1
+#ndtct = 1
 
 n_sample = 2**20
 T = 256.0
-n_conv = 20
+#n_conv = 20
 
 # load LIGO strain data (time domain)
 #L1 = np.loadtxt('data/L.txt')
@@ -61,8 +61,7 @@ TC2 = -127.5521
 
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-#h1 = h0*np.exp(-2.0j*np.pi*f*TC1)
-h1 = h0
+h1 = h0*np.exp(2.0j*np.pi*f*TC1)
 h1[0] = 0
 print('Constructed fiducial waveforms.')
 
@@ -73,7 +72,7 @@ f_hi = 1000.0
 tau = (5.0/(256.*np.pi*f_lo))*((np.pi*MC*5.*(10.**(-6.))*f_lo)**(-5./3.))
 print("tau=",tau)
 Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0.5)
-#print(Nbin, fbin, fbin_ind)
+print(Nbin, fbin, fbin_ind)
 
 print("Frequency binning done: # of bins = %d"%(Nbin))
 
@@ -84,13 +83,12 @@ rL = compute_rf(parL, h1, fbin, fbin_ind)
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
 j = fbin_ind[0]
-m = 1./(2.*tau)
+res = 1./(2.*tau)
 df = 1./T
-ad = m/df
+ad = res/df
 print("ad=",ad)
 #ad = 1
 fp = np.array(np.zeros(len(f)))
-
 #m = 0
 #for i in range(len(fbin)-1):
 #  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
@@ -98,34 +96,39 @@ fp = np.array(np.zeros(len(f)))
 #    m+=1
 
 print("Frequency array prepared")
+
 k = 0
 for i in range(len(fbin)-1):
   fmid = 0.5*(fbin[i] + fbin[i+1])
-  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], m):
-    #k = j-fbin_ind[0]
+  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], res):    
     fp[k] = fn
     fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
-    #fh = fbin_ind[i]*(1-int(ad))+int((j+1)*ad)
     h = 0.5*(h1[fh]+h1[fh+1])
     h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
     k+=1  
   #print(i)
 
-fp = np.asarray(fp[:k])  
-psd = sh(fp)
-h_int = np.asarray(h_int[:k])
+print("interpolated waveform created")
+
+#Truncating the array to appropriate size
+fp = fp[:k] 
+h_int = h_int[:k]
+
 
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*(1.0/T)
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*res
     return summ
   
-h20 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-h2 = h20*np.exp(-2.0j*np.pi*fp*TC1)
+#Now computing exact waveform at the new resolution 'res'
 
-a = np.absolute(overlap(h2,h2,fp))
+h2_0 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
+h2 = h20*np.exp(-2.0j*np.pi*fp*TC1)
+psd = sh(fp)
+
+a = np.absolute(overlap(h20,h20,fp))
 b = np.absolute(overlap(h_int,h_int,fp))
-c = np.absolute(overlap(h2,h_int,fp))
+c = np.absolute(overlap(h20,h_int,fp))
 
 d = c/(np.sqrt(a)*np.sqrt(b))
 
