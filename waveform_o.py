@@ -172,7 +172,7 @@ def compute_rf(par, h0, fbin, fbin_ind):
     s2z = chis - chia
 
     # waveform ratio
-    r = hf3hPN(f, M, eta, s1z=s1z, s2z=s2z, Lam=Lam) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
+    r = hf3hPN(f, M, eta, 0.0, s1z=s1z, s2z=s2z, Lam=Lam) / h0_bin * np.exp(-2.0j * np.pi * f * dtc)
     r0 = 0.5 * (r[:-1] + r[1:])
     r1 = (r[1:] - r[:-1]) / (f[1:] - f[:-1])
 
