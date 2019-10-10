@@ -60,9 +60,7 @@ TC1 = -127.5556                                  # merger time (L1)
 
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
-#h1 = h0*np.exp(2.0j*np.pi*f*TC1)
-h1 = h0
-h1[0] = 0
+h0[0] = 0
 print('Constructed fiducial waveforms.')
 
 # prepare frequency binning
@@ -78,7 +76,7 @@ print("Frequency binning done: # of bins = %d"%(Nbin))
 
 
 parL = [MC, ETA, CHIEFF, CHIA, LAM, TC1]
-rL = compute_rf(parL, h1, fbin, fbin_ind)
+rL = compute_rf(parL, h0, fbin, fbin_ind)
 
 print("Ratio array computed.")
 
