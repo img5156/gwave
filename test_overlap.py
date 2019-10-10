@@ -83,7 +83,7 @@ print("Frequency binning done: # of bins = %d"%(Nbin))
 MA = np.linspace(1.1973,1.1978,100)
 fp = np.array(np.zeros(len(f)))
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
-z = np.array(np.zeros(len(MA)))
+x = np.array(np.zeros(len(MA)))
 
 for l in range(len(MA)):
   #parL = [MA[l], ETA, CHIEFF, CHIA, LAM, TC1]
@@ -115,7 +115,7 @@ for l in range(len(MA)):
     #Now computing exact waveform at the new resolution 'res'
 
   h2_0 = hf3hPN(fp, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
-  h2_1 = hf3hPN(fp, MC, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
+  h2_1 = hf3hPN(fp, (MC/ETA**0.6), ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
   h20 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
   h21 = h2_1*np.exp(-2.0j*np.pi*fp*TC1)
   psd = sh(fp)
