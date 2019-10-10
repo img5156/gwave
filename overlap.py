@@ -129,7 +129,7 @@ print("interpolated waveform created")
 
 
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*res
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd2).sum()))*res
     return summ
   
 #Now computing exact waveform at the new resolution 'res'
@@ -137,6 +137,7 @@ def overlap(A, B, f):
 h2_0 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h2 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
+psd2 = sh(f[fbin_ind[0]:fbin_ind[-1]])
 
 print(fp[1000])
 pl.plot(f[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],h_int2[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],'g')
