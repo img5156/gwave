@@ -119,8 +119,8 @@ k = 0
 j = fbin_ind[0]
 for i in range(len(fbin)-1):
   fmid = 0.5*(fbin[i] + fbin[i+1])
-  for fn in range(fbin[i], fbin[i+1]):
-    h_int2[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h1[fbin_ind[0]+k]
+  for fn in np.arange(fbin[i], fbin[i+1], 1./T):
+    h_int2[fbin_ind[0]+k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h1[fbin_ind[0]+k]
     j+=1
     k+=1  
   print(i)
@@ -140,7 +140,7 @@ psd = sh(fp)
 
 print(fp[1000])
 pl.semilogx(fp[:1000],h_int[:1000],'r')
-pl.semilogx(f[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],h_int2[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],'g')
+pl.semilogx(f[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],h_int2[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],'g')
 pl.savefig("figures/overlap_comp.pdf")
 a = np.absolute(overlap(h2,h2,fp))
 b = np.absolute(overlap(h_int,h_int,fp))
