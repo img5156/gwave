@@ -106,15 +106,26 @@ for i in range(len(fbin)-1):
     fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
     h = 0.5*(h1[fh]+h1[fh+1])
     h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
-    j+=1
     k+=1  
+    j+=1
   #print(i)
-
-print("interpolated waveform created")
 
 #Truncating the array to appropriate size
 fp = fp[:k] 
 h_int = h_int[:k]
+
+h_int2 = np.array(np.zeros(len(f)), dtype=np.complex128)
+k = 0
+j = fbin_ind[0]
+for i in range(len(fbin)-1):
+  fmid = 0.5*(fbin[i] + fbin[i+1])
+  for fn in range(fbin[i], fbin[i+1]):
+    h_int2[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h1[fbin_ind[0]+k]
+    j+=1
+    k+=1  
+  print(i)
+
+print("interpolated waveform created")
 
 
 def overlap(A, B, f):
@@ -127,8 +138,9 @@ h2_0 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h2 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
 
-pl.semilogx(fp[:10000],h_int[:10000],'r')
-pl.semilogx(fp[:10000],h2[:10000],'g')
+print(fp[1000])
+pl.semilogx(fp[:1000,h_int[:1000],'r')
+pl.semilogx(f[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],h_int2[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],'g')
 pl.savefig("figures/overlap_comp.pdf")
 a = np.absolute(overlap(h2,h2,fp))
 b = np.absolute(overlap(h_int,h_int,fp))
