@@ -129,7 +129,7 @@ print("interpolated waveform created")
 
 
 def overlap(A, B, f):
-    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd2).sum()))*res
+    summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd2).sum()))*df
     return summ
   
 #Now computing exact waveform at the new resolution 'res'
@@ -140,9 +140,9 @@ psd = sh(fp)
 psd2 = sh(f[fbin_ind[0]:fbin_ind[-1]])
 
 print(fp[1000])
-pl.plot(f[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],h_int2[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],'g')
-pl.plot(fp[:1000],h_int[:1000],'r')
-pl.savefig("figures/overlap_comp2.pdf")
+pl.plot(f[fbin_ind[0]:(fbin_ind[0]+1000)],h_int2[fbin_ind[0]:(fbin_ind[0]+1000)],'g')
+pl.plot(f[fbin_ind[0]:(fbin_ind[0]+1000)],h1[fbin_ind[0]:(fbin_ind[0]+1000)],'r')
+pl.savefig("figures/overlap_comp3.pdf")
 a = np.absolute(overlap(h1[fbin_ind[0]:fbin_ind[-1]],h1[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
 b = np.absolute(overlap(h_int2[fbin_ind[0]:fbin_ind[-1]],h_int2[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
 c = np.absolute(overlap(h_int2[fbin_ind[0]:fbin_ind[-1]],h1[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
