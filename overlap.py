@@ -143,8 +143,8 @@ pl.plot(f[fbin_ind[0]:(fbin_ind[0]+int(1000*ad))],h_int2[fbin_ind[0]:(fbin_ind[0
 pl.plot(fp[:1000],h_int[:1000],'r')
 pl.savefig("figures/overlap_comp2.pdf")
 a = np.absolute(overlap(h1[fbin_ind[0]:fbin_ind[-1]],h1[fbin_ind[0]:],f[fbin_ind[0]:fbin_ind[-1]]))
-b = np.absolute(overlap(h_int2,h_int2,f[fbin_ind[0]:fbin_ind[-1]]))
-c = np.absolute(overlap(h_int2,h1[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
+b = np.absolute(overlap(h_int2[fbin_ind[0]:fbin_ind[-1]],h_int2[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
+c = np.absolute(overlap(h_int2[fbin_ind[0]:fbin_ind[-1]],h1[fbin_ind[0]:fbin_ind[-1]],f[fbin_ind[0]:fbin_ind[-1]]))
 
 d = c/(np.sqrt(a)*np.sqrt(b))
 
