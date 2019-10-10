@@ -56,7 +56,6 @@ CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
 TC1 = -127.5556                                  # merger time (L1)
-TC2 = -127.5521  
 
 
 # fiducial waveforms sampled at full frequency resolution
@@ -77,7 +76,7 @@ print("Frequency binning done: # of bins = %d"%(Nbin))
 
 
 parL = [MC, ETA, CHIEFF, CHIA, LAM, TC1]
-rL = compute_rf(parL, h1, fbin, fbin_ind)
+rL = compute_rf(parL, h0, fbin, fbin_ind)
 
 #h_int = [np.zeros(len(f)), np.zeros(len(f))]
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
