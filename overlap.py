@@ -61,6 +61,7 @@ TC1 = -127.5556                                  # merger time (L1)
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h0[0] = 0
+h1 = h0*np.exp(-2.0j*np.pi*f*TC1)
 print('Constructed fiducial waveforms.')
 
 # prepare frequency binning
@@ -101,7 +102,7 @@ for i in range(len(fbin)-1):
   for fn in np.arange(fbin[i], fbin[i+1], res):    
     fp[k] = fn
     fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
-    h = 0.5*(h0[fh]+h0[fh+1])
+    h = 0.5*(h1[fh]+h1[fh+1])
     h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
     k+=1  
