@@ -56,12 +56,12 @@ CHIS = 0.5*(S1Z + S2Z)
 CHIEFF = CHIS + DELTA*CHIA
 LAM = 0.0                                      # reduced tidal deformation parameter
 TC1 = -127.5556                                  # merger time (L1)
-TC2 = -127.5521  
 
 
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
-h1 = h0*np.exp(2.0j*np.pi*f*TC1)
+#h1 = h0*np.exp(2.0j*np.pi*f*TC1)
+h1 = h0
 h1[0] = 0
 print('Constructed fiducial waveforms.')
 
@@ -80,15 +80,16 @@ print("Frequency binning done: # of bins = %d"%(Nbin))
 parL = [MC, ETA, CHIEFF, CHIA, LAM, TC1]
 rL = compute_rf(parL, h1, fbin, fbin_ind)
 
-#h_int = [np.zeros(len(f)), np.zeros(len(f))]
+print("Ratio array computed.")
+
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
-j = fbin_ind[0]
 res = 1./(2.*tau)
 df = 1./T
 ad = res/df
 print("ad=",ad)
 #ad = 1
 fp = np.array(np.zeros(len(f)))
+
 #m = 0
 #for i in range(len(fbin)-1):
 #  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], 1/(2*tau)):
@@ -98,6 +99,8 @@ fp = np.array(np.zeros(len(f)))
 print("Frequency array prepared")
 
 k = 0
+j = fbin_ind[0]
+
 for i in range(len(fbin)-1):
   fmid = 0.5*(fbin[i] + fbin[i+1])
   for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], res):    
@@ -115,6 +118,7 @@ print("interpolated waveform created")
 fp = fp[:k] 
 h_int = h_int[:k]
 
+print("Waveform and frequency arrays truncated.")
 
 def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*res
@@ -127,6 +131,8 @@ h2_1 = hf3hPN(fp, M, ETA, 0.5*np.pi, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h20 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 h21 = h2_1*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
+
+print("Real waveforms created.")
 
 a = np.absolute(overlap(h20,h20,fp))
 b = np.absolute(overlap(h21,h21,fp))
@@ -150,7 +156,7 @@ print("Overlap h21, h_int=",e)
 print("Normalized h20, h_int",f)
 print("Normalized h21, h_int",g)
 print("Quad Sum",h)
-print("Shape of h_int = ",np.shape(h_int))
-print("Shape of h2_0 = ",np.shape(h20))
-print("Shape of h2_1 = ",np.shape(h21))
-print("Length of fp=",len(fp))
+#print("Shape of h_int = ",np.shape(h_int))
+#print("Shape of h2_0 = ",np.shape(h20))
+#print("Shape of h2_1 = ",np.shape(h21))
+#print("Length of fp=",len(fp))
