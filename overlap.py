@@ -3,6 +3,8 @@
 import numpy as np
 import scipy as sp
 import math as mt
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as pl
 # provide sample waveform model
 from waveform import *
 # routines for binning, summary data, etc.
@@ -125,6 +127,9 @@ h2_0 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
 h2 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
 
+pl.plot(fp,h_int)
+pl.plot(fp,h2)
+pl.savefig("figures/overlap_comp.pdf")
 a = np.absolute(overlap(h2,h2,fp))
 b = np.absolute(overlap(h_int,h_int,fp))
 c = np.absolute(overlap(h2,h_int,fp))
