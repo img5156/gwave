@@ -43,7 +43,6 @@ def overlap(A, B, f):
     summ = 2.*np.real((((A*np.conjugate(B)+np.conjugate(A)*B)/psd).sum()))*res
     return summ
 
-print('Finished estimating the PSD.')
 
 MC = 1.1976                                      # detector frame chirp mass [Msun]
 ETA = 0.244                                      # symmetric mass ratio m1*m2/(m1 + m2)**2
@@ -72,7 +71,7 @@ print('Constructed fiducial waveforms.')
 f_lo = 23.0
 f_hi = 1000.0
 Nbin, fbin, fbin_ind = setup_bins(f_full=f, f_lo=f_lo, f_hi=f_hi, chi=1.0, eps=0.5)
-print(Nbin, fbin, fbin_ind)
+#print(Nbin, fbin, fbin_ind)
 
 print("Frequency binning done: # of bins = %d"%(Nbin))
 
@@ -82,53 +81,54 @@ print("Frequency binning done: # of bins = %d"%(Nbin))
 MA = np.linspace(1.1973,1.1978,100)
 fp = np.array(np.zeros(len(f)))
 h_int = np.array(np.zeros(len(f)), dtype=np.complex128)
-fp = np.array(np.zeros(len(MA)))
+z = np.array(np.zeros(len(MA)))
 
 for l in range(len(MA)):
-    parL = [MA[l], ETA, CHIEFF, CHIA, LAM, TC1]
-    rL = compute_rf(parL, h1, fbin, fbin_ind)
-    tau = (5.0/(256.*np.pi*f_lo))*((np.pi*MC*5.*(10.**(-6.))*f_lo)**(-5./3.))
+  parL = [MA[l], ETA, CHIEFF, CHIA, LAM, TC1]
+  rL = compute_rf(parL, h1, fbin, fbin_ind)
+  tau = (5.0/(256.*np.pi*f_lo))*((np.pi*MA[l]*5.*(10.**(-6.))*f_lo)**(-5./3.))
 
-    res = 1./(2.*tau)
-    df = 1./T
-    ad = res/df
-    M = MA[l]/ETA**0.6
+  res = 1./(2.*tau)
+  df = 1./T
+  ad = res/df
+  M = MA[l]/ETA**0.6
 
-    k = 0
-    j = fbin_ind[0]
+  k = 0
+  j = fbin_ind[0]
 
-    for i in range(len(fbin)-1):
-      fmid = 0.5*(fbin[i] + fbin[i+1])
-      for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], res):    
-        fp[k] = fn
-        fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
-        h = 0.5*(h1[fh]+h1[fh+1])
-        h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
-        j+=1
-        k+=1  
+  for i in range(len(fbin)-1):
+    fmid = 0.5*(fbin[i] + fbin[i+1])
+    for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], res):    
+      fp[k] = fn
+      fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
+      h = 0.5*(h1[fh]+h1[fh+1])
+      h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
+      j+=1
+      k+=1  
 
     #Truncating the array to appropriate size
-    fp = fp[:k] 
-    h_int = h_int[:k]
+  fp = fp[:k] 
+  h_int = h_int[:k]
 
     #Now computing exact waveform at the new resolution 'res'
 
-    h2_0 = hf3hPN(fp, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
-    h2_1 = hf3hPN(fp, M, ETA, 0.5*np.pi, s1z=S1Z, s2z=S2Z, Lam=LAM)
-    h20 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
-    h21 = h2_1*np.exp(-2.0j*np.pi*fp*TC1)
-    psd = sh(fp)
+  h2_0 = hf3hPN(fp, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
+  h2_1 = hf3hPN(fp, M, ETA, 0.5*np.pi, s1z=S1Z, s2z=S2Z, Lam=LAM)
+  h20 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
+  h21 = h2_1*np.exp(-2.0j*np.pi*fp*TC1)
+  psd = sh(fp)
 
-    a = np.absolute(overlap(h20,h20,fp))
-    b = np.absolute(overlap(h21,h21,fp))
-    c = np.absolute(overlap(h_int,h_int,fp))
-    d = np.absolute(overlap(h20,h_int,fp))
-    e = np.absolute(overlap(h21,h_int,fp))
+  a = np.absolute(overlap(h20,h20,fp))
+  b = np.absolute(overlap(h21,h21,fp))
+  c = np.absolute(overlap(h_int,h_int,fp))
+  d = np.absolute(overlap(h20,h_int,fp))
+  e = np.absolute(overlap(h21,h_int,fp))
 
-    f = d/(np.sqrt(a)*np.sqrt(c))
-    g = e/(np.sqrt(b)*np.sqrt(c))
+  x = d/(np.sqrt(a)*np.sqrt(c))
+  y = e/(np.sqrt(b)*np.sqrt(c))
 
-    h[l] = np.sqrt(f**2+g**2)
+  z[l] = np.sqrt(x**2+y**2)
+  print(l)
 
 pl.plot(MA,h)
 pl.savefig("figures/overlap_MC.pdf")
