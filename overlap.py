@@ -61,8 +61,7 @@ TC2 = -127.5521
 
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-h1 = h0*np.exp(2.0j*np.pi*f*TC1)
-h1[0] = 0
+h0[0] = 0
 print('Constructed fiducial waveforms.')
 
 # prepare frequency binning
@@ -100,10 +99,10 @@ print("Frequency array prepared")
 k = 0
 for i in range(len(fbin)-1):
   fmid = 0.5*(fbin[i] + fbin[i+1])
-  for fn in np.arange(f[fbin_ind[i]], f[fbin_ind[i+1]], res):    
+  for fn in np.arange(fbin[i], fbin[i+1], res):    
     fp[k] = fn
     fh = fbin_ind[i]+int((j-fbin_ind[i])*ad)
-    h = 0.5*(h1[fh]+h1[fh+1])
+    h = 0.5*(h0[fh]+h0[fh+1])
     h_int[k] = (rL[0][i] + (fn-fmid)*rL[1][i])*h
     j+=1
     k+=1  
