@@ -64,9 +64,8 @@ TC1 = -127.5556                                  # merger time (L1)
 
 # fiducial waveforms sampled at full frequency resolution
 h0 = hf3hPN(f, M, ETA, 0.0, s1z=S1Z, s2z=S2Z, Lam=LAM)
-#h1 = h0*np.exp(2.0j*np.pi*f*TC1)
-h1 = h0
-h1[0] = 0
+h0[0]=0
+h1 = h0*np.exp(-2.0j*np.pi*f*TC1)
 print('Constructed fiducial waveforms.')
 
 # prepare frequency binning
@@ -88,7 +87,7 @@ z = np.array(np.zeros(len(MA)))
 
 for l in range(len(MA)):
   parL = [MA[l], ETA, CHIEFF, CHIA, LAM, TC1]
-  rL = compute_rf(parL, h1, fbin, fbin_ind)
+  rL = compute_rf(parL, h0, fbin, fbin_ind)
   tau = (5.0/(256.*np.pi*f_lo))*((np.pi*MA[l]*5.*(10.**(-6.))*f_lo)**(-5./3.))
 
   res = 1./(2.*tau)
@@ -133,5 +132,5 @@ for l in range(len(MA)):
   z[l] = np.sqrt(x**2+y**2)
   print(l)
 
-pl.plot(MA,h)
+pl.plot(MA,z)
 pl.savefig("figures/overlap_MC.pdf")
