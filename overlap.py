@@ -121,7 +121,7 @@ def overlap(A, B, f):
 #Now computing exact waveform at the new resolution 'res'
 
 h2_0 = hf3hPN(fp, M, ETA, s1z=S1Z, s2z=S2Z, Lam=LAM)
-h2 = h20*np.exp(-2.0j*np.pi*fp*TC1)
+h2 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
 
 a = np.absolute(overlap(h20,h20,fp))
