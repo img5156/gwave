@@ -139,7 +139,7 @@ h2 = h2_0*np.exp(-2.0j*np.pi*fp*TC1)
 psd = sh(fp)
 
 print(fp[1000])
-pl.semilogx(fp[:1000,h_int[:1000],'r')
+pl.semilogx(fp[:1000],h_int[:1000],'r')
 pl.semilogx(f[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],h_int2[fbin_ind[0]:fbin_ind[0]+int(1000*ad)],'g')
 pl.savefig("figures/overlap_comp.pdf")
 a = np.absolute(overlap(h2,h2,fp))
