@@ -1,10 +1,13 @@
 import numpy as np
 import scipy as sp
 import math as mt
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as pl
 # provide sample waveform model
 from waveform_o import *
 # routines for binning, summary data, etc.
 from binning import *
+
 
 # number of detectors (Livingston and Hanford)
 #ndtct = 1
